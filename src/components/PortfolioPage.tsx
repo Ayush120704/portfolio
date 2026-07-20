@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import dynamic from "next/dynamic";
 import HeroSection from "@/components/sections/HeroSection";
 import AboutSection from "@/components/sections/AboutSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
@@ -14,6 +15,10 @@ import Navbar from "@/components/ui/Navbar";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import MouseTracker from "@/components/ui/MouseTracker";
 import SpotlightEffect from "@/components/ui/SpotlightEffect";
+
+const GlobalScene = dynamic(() => import("@/components/3d/GlobalScene"), {
+  ssr: false,
+});
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -72,11 +77,12 @@ export default function PortfolioPage() {
 
   return (
     <>
+      <GlobalScene />
       <LoadingScreen />
       <MouseTracker />
       <SpotlightEffect />
       <Navbar />
-      <main>
+      <main className="relative z-10">
         <HeroSection />
         <AboutSection />
         <ProjectsSection />

@@ -6,6 +6,8 @@ export const personalInfo = {
   phone: "8960961976",
   github: "https://github.com/Ayush120704",
   leetcode: "https://leetcode.com/u/ayushmishra12345/",
+  linkedin: "",
+  twitter: "",
   bio: [
     "B.Tech CSE @ United Institute of Technology, Prayagraj (2027) — 8.31 CGPA",
     "Researching multimodal AI & NLP through NeuroWell, a mental-health companion combining facial emotion recognition + cognitive distortion detection",
@@ -22,6 +24,7 @@ export interface Project {
   longDescription: string;
   technologies: string[];
   githubUrl: string;
+  liveUrl?: string;
   category: "ai/ml" | "fullstack" | "web";
   featured: boolean;
 }
@@ -190,7 +193,7 @@ export const experience = [
   {
     title: "Global Innovation Intern",
     company: "Collab4Good",
-    location: "Bangkok, Thailand (Remote)",
+    location: "Bangkok, Thailand (In-Campus)",
     period: "2025 — Present",
     description:
       "Building NGO tech solutions on the MERN stack. Developing full-stack web applications for social impact organizations.",
@@ -224,8 +227,26 @@ export const experience = [
 ];
 
 export const stats = [
-  { label: "CGPA", value: "8.31" },
-  { label: "LeetCode Streak", value: "151" },
-  { label: "Projects", value: `${projects.length}+` },
-  { label: "GitHub Repos", value: "9+" },
+  { label: "CGPA", value: 8.31, suffix: "" },
+  { label: "LeetCode Streak", value: 151, suffix: " days" },
+  { label: "Projects", value: projects.length, suffix: "+" },
+  { label: "GitHub Repos", value: 9, suffix: "+" },
+];
+
+export const marqueeItems = [
+  "PyTorch",
+  "TensorFlow",
+  "React",
+  "Next.js",
+  "Python",
+  "NLP",
+  "Computer Vision",
+  "FastAPI",
+  "Node.js",
+  "MongoDB",
+  "BERT",
+  "Docker",
+  "TypeScript",
+  "Java",
+  "Machine Learning",
 ];

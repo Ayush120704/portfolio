@@ -2,18 +2,13 @@
 
 import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import dynamic from "next/dynamic";
 import { personalInfo, stats } from "@/lib/data";
 import { usePortfolioStore } from "@/lib/store";
 import { ChevronDown } from "lucide-react";
-import { useMousePosition } from "@/hooks/useMousePosition";
-
-const HeroScene = dynamic(() => import("@/components/3d/HeroScene"), {
-  ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent" />
-  ),
-});
+import AnimatedCounter from "@/components/ui/AnimatedCounter";
+import MarqueeText from "@/components/ui/MarqueeText";
+import MagneticButton from "@/components/ui/MagneticButton";
+import { marqueeItems } from "@/lib/data";
 
 function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
   const [displayed, setDisplayed] = useState("");
@@ -52,12 +47,6 @@ export default function HeroSection() {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { margin: "-100px" });
   const { setActiveSection, setCursorVariant } = usePortfolioStore();
-  const mouse = useMousePosition();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (isInView) setActiveSection("hero");
@@ -67,27 +56,16 @@ export default function HeroSection() {
     <section
       id="hero"
       ref={ref}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
     >
-      <HeroScene />
-
-      <div
-        className="absolute inset-0 pointer-events-none transition-all duration-700 ease-out"
-        style={{
-          background: mounted
-            ? `radial-gradient(800px circle at ${mouse.clientX}px ${mouse.clientY}px, rgba(108, 99, 255, 0.1), transparent 40%)`
-            : "none",
-        }}
-      />
-
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-6"
+          className="mb-4 sm:mb-6"
         >
-          <span className="inline-block px-4 py-2 rounded-full glass text-sm text-muted mb-6 animate-glow-border">
+          <span className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 rounded-full glass text-[10px] sm:text-xs md:text-sm text-muted animate-glow-border">
             Open to opportunities
           </span>
         </motion.div>
@@ -96,7 +74,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight"
+          className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-4 sm:mb-6 leading-tight"
         >
           {personalInfo.name.split(" ").map((word, i) => (
             <span key={word} className="block">
@@ -113,7 +91,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="text-lg md:text-xl text-muted mb-4 font-mono"
+          className="text-sm sm:text-lg md:text-xl text-muted mb-3 sm:mb-4 font-mono"
         >
           <TypewriterText text={`> ${personalInfo.title}_`} delay={1400} />
         </motion.p>
@@ -122,7 +100,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
-          className="text-sm text-muted/60 mb-10"
+          className="text-[10px] sm:text-xs md:text-sm text-muted/60 mb-6 sm:mb-10 max-w-md mx-auto"
         >
           {personalInfo.subtitle}
         </motion.p>
@@ -131,7 +109,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.2 }}
-          className="flex flex-wrap justify-center gap-8 mb-12"
+          className="flex flex-wrap justify-center gap-4 sm:gap-8 mb-8 sm:mb-12"
         >
           {stats.map((stat, i) => (
             <motion.div
@@ -139,12 +117,12 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.3 + i * 0.1 }}
-              className="text-center gsap-reveal"
+              className="text-center"
             >
-              <div className="text-2xl md:text-3xl font-bold gradient-text">
-                {stat.value}
+              <div className="text-lg sm:text-2xl md:text-3xl font-bold gradient-text">
+                <AnimatedCounter value={stat.value} suffix={stat.suffix} />
               </div>
-              <div className="text-xs text-muted mt-1">{stat.label}</div>
+              <div className="text-[9px] sm:text-xs text-muted mt-1">{stat.label}</div>
             </motion.div>
           ))}
         </motion.div>
@@ -153,25 +131,29 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.6 }}
-          className="flex flex-wrap justify-center gap-4"
+          className="flex flex-wrap justify-center gap-3 sm:gap-4"
         >
-          <a
-            href="#projects"
-            className="group relative px-8 py-3 rounded-full bg-accent text-white font-medium text-sm overflow-hidden transition-all hover:shadow-[0_0_30px_rgba(108,99,255,0.4)]"
-            onMouseEnter={() => setCursorVariant("button")}
-            onMouseLeave={() => setCursorVariant("default")}
-          >
-            <span className="relative z-10">View Projects</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-accent to-accent-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          </a>
-          <a
-            href="#contact"
-            className="px-8 py-3 rounded-full glass font-medium text-sm hover:bg-surface-hover hover:border-accent/30 transition-all duration-300"
-            onMouseEnter={() => setCursorVariant("button")}
-            onMouseLeave={() => setCursorVariant("default")}
-          >
-            Get in Touch
-          </a>
+          <MagneticButton>
+            <a
+              href="#projects"
+              className="group relative px-5 sm:px-8 py-2.5 sm:py-3 rounded-full bg-accent text-white font-medium text-xs sm:text-sm overflow-hidden transition-all hover:shadow-[0_0_30px_rgba(108,99,255,0.4)]"
+              onMouseEnter={() => setCursorVariant("button")}
+              onMouseLeave={() => setCursorVariant("default")}
+            >
+              <span className="relative z-10">View Projects</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-accent to-accent-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            </a>
+          </MagneticButton>
+          <MagneticButton>
+            <a
+              href="#contact"
+              className="px-5 sm:px-8 py-2.5 sm:py-3 rounded-full glass font-medium text-xs sm:text-sm hover:bg-surface-hover hover:border-accent/30 transition-all duration-300"
+              onMouseEnter={() => setCursorVariant("button")}
+              onMouseLeave={() => setCursorVariant("default")}
+            >
+              Get in Touch
+            </a>
+          </MagneticButton>
         </motion.div>
       </div>
 
@@ -179,15 +161,20 @@ export default function HeroSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-16 sm:bottom-24 left-1/2 -translate-x-1/2 z-10"
       >
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <ChevronDown size={24} className="text-muted" />
+          <ChevronDown size={20} className="text-muted sm:hidden" />
+          <ChevronDown size={24} className="text-muted hidden sm:block" />
         </motion.div>
       </motion.div>
+
+      <div className="absolute bottom-0 left-0 right-0 z-10">
+        <MarqueeText items={marqueeItems} speed={40} className="py-2 sm:py-3 opacity-50" />
+      </div>
     </section>
   );
 }

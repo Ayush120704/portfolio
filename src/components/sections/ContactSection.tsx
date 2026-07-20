@@ -5,6 +5,7 @@ import { motion, useInView } from "framer-motion";
 import { personalInfo } from "@/lib/data";
 import { usePortfolioStore } from "@/lib/store";
 import { Mail, Phone, Code, ExternalLink, Send, CheckCircle, Loader2 } from "lucide-react";
+import useWeb3Forms from "@web3forms/react";
 
 type SubmitState = "idle" | "sending" | "success" | "error";
 
@@ -19,7 +20,21 @@ export default function ContactSection() {
     message: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
+
+  const { submit: sendEmail } = useWeb3Forms({
+    access_key: "YOUR_WEB3FORMS_ACCESS_KEY",
+    onSuccess: () => {
+      setSubmitState("success");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+      setTimeout(() => setSubmitState("idle"), 5000);
+    },
+    onError: () => {
+      setSubmitState("error");
+      setTimeout(() => setSubmitState("idle"), 3000);
+    },
+  });
 
   useEffect(() => {
     if (isInView) setActiveSection("contact");
@@ -44,25 +59,12 @@ export default function ContactSection() {
     setSubmitState("sending");
 
     try {
-      const response = await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          "form-name": "contact",
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-        }).toString(),
+      await sendEmail({
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
       });
-
-      if (response.ok) {
-        setSubmitState("success");
-        setFormData({ name: "", email: "", subject: "", message: "" });
-        setTimeout(() => setSubmitState("idle"), 5000);
-      } else {
-        throw new Error("Form submission failed");
-      }
     } catch {
       setSubmitState("error");
       setTimeout(() => setSubmitState("idle"), 3000);
@@ -139,19 +141,7 @@ export default function ContactSection() {
         </p>
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-          <form
-            name="contact"
-            method="POST"
-            data-netlify="true"
-            data-netlify-honeypot="bot-field"
-            onSubmit={handleSubmit}
-            className="space-y-4"
-          >
-            <input type="hidden" name="form-name" value="contact" />
-            <div className="hidden">
-              <input name="bot-field" tabIndex={-1} />
-            </div>
-
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <input
                 type="text"

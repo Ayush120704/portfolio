@@ -1,7 +1,7 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Suspense, useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import ParticleField from "./ParticleField";
 import FloatingGeometry from "./FloatingGeometry";
@@ -17,6 +17,35 @@ import {
 } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 
+function ScrollRotation({ children }: { children: React.ReactNode }) {
+  const groupRef = useRef<THREE.Group>(null!);
+  const targetRotY = useRef(0);
+  const currentRotY = useRef(0);
+  const targetRotX = useRef(0);
+  const currentRotX = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+      targetRotY.current = scrollPercent * Math.PI * 4;
+      targetRotX.current = Math.sin(scrollPercent * Math.PI * 2) * 0.3;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useFrame(() => {
+    if (!groupRef.current) return;
+    currentRotY.current += (targetRotY.current - currentRotY.current) * 0.05;
+    currentRotX.current += (targetRotX.current - currentRotX.current) * 0.05;
+    groupRef.current.rotation.y = currentRotY.current;
+    groupRef.current.rotation.x = currentRotX.current;
+  });
+
+  return <group ref={groupRef}>{children}</group>;
+}
+
 function SceneContent() {
   return (
     <>
@@ -24,12 +53,14 @@ function SceneContent() {
       <pointLight position={[10, 10, 10]} intensity={0.6} color="#6c63ff" />
       <pointLight position={[-10, -5, 5]} intensity={0.3} color="#00d4aa" />
       <pointLight position={[0, -8, 3]} intensity={0.2} color="#ff6b9d" />
-      <ParticleField />
-      <FloatingGeometry />
-      <NeuralNetwork />
-      <DataStreams />
-      <BrainMesh />
-      <MatrixRain />
+      <ScrollRotation>
+        <ParticleField />
+        <FloatingGeometry />
+        <NeuralNetwork />
+        <DataStreams />
+        <BrainMesh />
+        <MatrixRain />
+      </ScrollRotation>
       <EffectComposer>
         <Bloom
           intensity={0.6}

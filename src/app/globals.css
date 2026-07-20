@@ -84,12 +84,34 @@ body {
   100% { background-position: 0% 50%; }
 }
 
+@keyframes glow-border {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(108, 99, 255, 0.15),
+                inset 0 0 15px rgba(108, 99, 255, 0.05);
+    border-color: rgba(108, 99, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(108, 99, 255, 0.25),
+                inset 0 0 25px rgba(108, 99, 255, 0.1);
+    border-color: rgba(108, 99, 255, 0.5);
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
 
 .animate-pulse-glow {
   animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-glow-border {
+  animation: glow-border 3s ease-in-out infinite;
 }
 
 .gradient-text {
@@ -103,6 +125,38 @@ body {
   background: var(--surface);
   backdrop-filter: blur(20px);
   border: 1px solid var(--border-color);
+}
+
+.glass-hover {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-hover:hover {
+  background: var(--surface-hover);
+  border-color: rgba(108, 99, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(108, 99, 255, 0.1),
+              0 0 0 1px rgba(108, 99, 255, 0.05);
+}
+
+.shimmer-overlay {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.03),
+    transparent
+  );
+  animation: shimmer 3s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

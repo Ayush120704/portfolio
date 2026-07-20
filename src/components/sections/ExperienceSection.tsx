@@ -21,12 +21,7 @@ export default function ExperienceSection() {
       ref={ref}
       className="relative py-32 px-6 max-w-4xl mx-auto"
     >
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
+      <div>
         <div className="flex items-center gap-3 mb-12">
           <div className="h-px flex-1 max-w-[60px] bg-accent" />
           <span className="text-sm text-accent font-mono uppercase tracking-widest">
@@ -47,43 +42,52 @@ export default function ExperienceSection() {
                 key={i}
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="relative pl-14 md:pl-16"
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: i * 0.2, duration: 0.6, ease: "easeOut" }}
+                className="relative pl-14 md:pl-16 gsap-reveal"
               >
-                <div className="absolute left-4 top-1 w-5 h-5 rounded-full bg-accent flex items-center justify-center hidden md:flex">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.2 + 0.1, duration: 0.4, ease: "backOut" }}
+                  className="absolute left-4 top-1 w-5 h-5 rounded-full bg-accent flex items-center justify-center hidden md:flex shadow-[0_0_20px_rgba(108,99,255,0.4)]"
+                >
                   <Briefcase size={10} className="text-white" />
-                </div>
+                </motion.div>
 
-                <div className="glass rounded-2xl p-6">
-                  <div className="flex flex-wrap items-center gap-3 mb-3">
-                    <span className="text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded">
-                      {exp.period}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-bold mb-1">{exp.title}</h3>
-                  <p className="text-sm text-accent-secondary mb-3">
-                    {exp.company} · {exp.location}
-                  </p>
-                  <p className="text-sm text-muted leading-relaxed mb-4">
-                    {exp.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {exp.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2 py-1 rounded-md bg-surface text-xs text-muted"
-                      >
-                        {tech}
+                <div className="glass rounded-2xl p-6 relative overflow-hidden group hover:border-accent/20 transition-all duration-500">
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-br from-accent/5 to-transparent" />
+                  <div className="relative z-10">
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
+                      <span className="text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded">
+                        {exp.period}
                       </span>
-                    ))}
+                    </div>
+                    <h3 className="text-xl font-bold mb-1">{exp.title}</h3>
+                    <p className="text-sm text-accent-secondary mb-3">
+                      {exp.company} · {exp.location}
+                    </p>
+                    <p className="text-sm text-muted leading-relaxed mb-4">
+                      {exp.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {exp.technologies.map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-2 py-1 rounded-md bg-surface text-xs text-muted"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

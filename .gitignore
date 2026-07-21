@@ -9,6 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.next/
 
 # testing
 /coverage
@@ -39,6 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# duplicate subfolder (no source code)
+/portfolio-website/
 
 # boilerplate (not needed)
 AGENTS.md

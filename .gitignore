@@ -54,3 +54,6 @@ public/vercel.svg
 public/window.svg
 
 .vercel
+
+.vercel
+.env*

@@ -2,10 +2,83 @@
 
 import { useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import { skills } from "@/lib/data";
+import { techCategories, type TechCategory } from "@/lib/data";
 import { usePortfolioStore } from "@/lib/store";
-import TiltCard from "@/components/ui/TiltCard";
+import { Sparkles, ArrowUpRight } from "lucide-react";
+import PyramidCarousel from "@/components/ui/PyramidCarousel";
 
+/* -- Compact card for each tech category ------------ */
+function TechCard({ item }: { item: TechCategory }) {
+  const { setCursorVariant } = usePortfolioStore();
+  const c = item.color;
+
+  return (
+    <motion.div
+      className="group relative block w-full h-full p-3 sm:p-5 flex flex-col justify-between"
+      onMouseEnter={() => setCursorVariant("link")}
+      onMouseLeave={() => setCursorVariant("default")}
+    >
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <span
+            className="text-[8px] font-mono uppercase tracking-[0.15em] font-semibold px-2 py-0.5 rounded-full border"
+            style={{
+              color: c,
+              backgroundColor: `${c}14`,
+              borderColor: `${c}30`,
+            }}
+          >
+            Category
+          </span>
+          <Sparkles size={11} style={{ color: c }} />
+        </div>
+
+        <h3
+          className="text-xs sm:text-sm font-bold leading-snug mb-2 transition-colors"
+          style={{ color: "var(--foreground)" }}
+        >
+          {item.category}
+        </h3>
+
+        <div className="flex flex-wrap gap-1">
+          {item.items.slice(0, 6).map((skill) => (
+            <span
+              key={skill}
+              className="px-1.5 py-0.5 rounded text-[7px] sm:text-[8px] font-medium border"
+              style={{
+                color: c,
+                backgroundColor: `${c}0d`,
+                borderColor: `${c}22`,
+              }}
+            >
+              {skill}
+            </span>
+          ))}
+          {item.items.length > 6 && (
+            <span className="px-1.5 py-0.5 rounded text-[7px] sm:text-[8px] border"
+              style={{
+                color: "var(--muted)",
+                borderColor: "var(--border-color)",
+              }}
+            >
+              +{item.items.length - 6}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div
+        className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-medium mt-2 transition-all duration-300 group-hover:gap-2"
+        style={{ color: c }}
+      >
+        <span>{item.items.length} technologies</span>
+        <ArrowUpRight size={10} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+      </div>
+    </motion.div>
+  );
+}
+
+/* -- Section ---------------------------------------- */
 export default function SkillsSection() {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { margin: "-200px" });
@@ -15,13 +88,11 @@ export default function SkillsSection() {
     if (isInView) setActiveSection("skills");
   }, [isInView, setActiveSection]);
 
-  const categories = Object.entries(skills);
-
   return (
     <section
       id="skills"
       ref={ref}
-      className="relative py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto"
+      className="relative py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
     >
       <div className="backdrop-blur-sm bg-background/30 rounded-3xl p-4 sm:p-8 lg:p-12">
         <div className="flex items-center gap-3 mb-8 sm:mb-12">
@@ -35,48 +106,12 @@ export default function SkillsSection() {
           Tech <span className="gradient-text">stack</span>
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-          {categories.map(([category, items], catIndex) => (
-            <TiltCard key={category} className="gsap-reveal" intensity={6}>
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: catIndex * 0.1, duration: 0.6 }}
-                className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 relative overflow-hidden group hover:border-accent/20 transition-all duration-500 h-full"
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-br from-accent/5 to-transparent" />
-                <div className="relative z-10">
-                  <h3 className="font-semibold text-sm sm:text-base lg:text-lg mb-3 sm:mb-4 gradient-text">
-                    {category}
-                  </h3>
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                    {items.map((skill, i) => (
-                      <motion.span
-                        key={skill}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{
-                          delay: catIndex * 0.1 + i * 0.04,
-                          duration: 0.4,
-                          ease: "backOut",
-                        }}
-                        whileHover={{
-                          scale: 1.1,
-                          backgroundColor: "var(--accent)",
-                          color: "white",
-                        }}
-                        className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg bg-surface text-[10px] sm:text-xs md:text-sm text-muted transition-colors cursor-default"
-                      >
-                        {skill}
-                      </motion.span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </TiltCard>
-          ))}
+        <div className="gsap-reveal">
+          <PyramidCarousel
+            items={techCategories}
+            renderItem={(item: TechCategory) => <TechCard item={item} />}
+            direction="vertical"
+          />
         </div>
       </div>
     </section>

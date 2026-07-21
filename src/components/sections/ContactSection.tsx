@@ -5,7 +5,6 @@ import { motion, useInView } from "framer-motion";
 import { personalInfo } from "@/lib/data";
 import { usePortfolioStore } from "@/lib/store";
 import { Mail, Phone, Code, ExternalLink, Send, CheckCircle, Loader2 } from "lucide-react";
-import useWeb3Forms from "@web3forms/react";
 
 type SubmitState = "idle" | "sending" | "success" | "error";
 
@@ -22,19 +21,6 @@ export default function ContactSection() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
-
-  const { submit: sendEmail } = useWeb3Forms({
-    access_key: "YOUR_WEB3FORMS_ACCESS_KEY",
-    onSuccess: () => {
-      setSubmitState("success");
-      setFormData({ name: "", email: "", subject: "", message: "" });
-      setTimeout(() => setSubmitState("idle"), 5000);
-    },
-    onError: () => {
-      setSubmitState("error");
-      setTimeout(() => setSubmitState("idle"), 3000);
-    },
-  });
 
   useEffect(() => {
     if (isInView) setActiveSection("contact");
@@ -56,18 +42,40 @@ export default function ContactSection() {
     e.preventDefault();
     if (!validate()) return;
 
+    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+    if (!accessKey) {
+      window.location.href = `mailto:${personalInfo.email}?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`From: ${formData.name} (${formData.email})\n\n${formData.message}`)}`;
+      return;
+    }
+
     setSubmitState("sending");
 
     try {
-      await sendEmail({
-        name: formData.name,
-        email: formData.email,
-        subject: formData.subject,
-        message: formData.message,
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        }),
       });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setSubmitState("success");
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        setTimeout(() => setSubmitState("idle"), 5000);
+      } else {
+        setSubmitState("error");
+        setTimeout(() => setSubmitState("idle"), 5000);
+      }
     } catch {
       setSubmitState("error");
-      setTimeout(() => setSubmitState("idle"), 3000);
+      setTimeout(() => setSubmitState("idle"), 5000);
     }
   };
 

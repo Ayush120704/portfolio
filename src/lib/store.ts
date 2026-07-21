@@ -16,7 +16,7 @@ interface PortfolioStore {
 }
 
 export const usePortfolioStore = create<PortfolioStore>((set) => ({
-  theme: "dark",
+  theme: "light",
   toggleTheme: () =>
     set((state) => {
       const newTheme = state.theme === "dark" ? "light" : "dark";

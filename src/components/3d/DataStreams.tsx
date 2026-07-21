@@ -50,12 +50,12 @@ export default function DataStreams() {
     const t = state.clock.elapsedTime;
     const posArr = pointsRef.current.geometry.attributes.position
       .array as Float32Array;
+    const totalPoints = posArr.length / 3;
 
-    for (let i = 0; i < posArr.length / 3; i++) {
+    for (let i = 0; i < totalPoints; i++) {
       const i3 = i * 3;
       posArr[i3 + 1] += velocities[i];
 
-      // Reset to bottom when past top
       if (posArr[i3 + 1] > 6) {
         posArr[i3 + 1] = -6;
       }

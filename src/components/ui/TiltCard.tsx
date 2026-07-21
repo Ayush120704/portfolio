@@ -17,13 +17,20 @@ export default function TiltCard({
   intensity = 15,
 }: TiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const rectRef = useRef<DOMRect | null>(null);
   const [transform, setTransform] = useState("perspective(1000px) rotateX(0deg) rotateY(0deg)");
   const [glarePosition, setGlarePosition] = useState({ x: 50, y: 50 });
   const [isHovered, setIsHovered] = useState(false);
 
+  const handleMouseEnter = () => {
+    if (cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
+  };
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
+    const rect = rectRef.current;
+    if (!rect) return;
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
@@ -44,6 +51,7 @@ export default function TiltCard({
     setTransform("perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)");
     setGlarePosition({ x: 50, y: 50 });
     setIsHovered(false);
+    rectRef.current = null;
   };
 
   return (
@@ -55,8 +63,8 @@ export default function TiltCard({
         transition: "transform 0.1s ease-out",
         transformStyle: "preserve-3d",
       }}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
     >
       <div

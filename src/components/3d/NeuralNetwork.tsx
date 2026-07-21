@@ -92,60 +92,69 @@ export default function NeuralNetwork() {
       groupRef.current.rotation.y = t * 0.05;
     }
 
-    // Animate node positions
     const posArr = pointsRef.current?.geometry.attributes.position
       .array as Float32Array;
     if (!posArr) return;
 
+    const sin0 = Math.sin(t * 0.3);
+    const cos0 = Math.cos(t * 0.2);
+    const sin1 = Math.sin(t * 0.25);
+
     for (let i = 0; i < NODE_COUNT; i++) {
       const i3 = i * 3;
-      posArr[i3] += nodeVelocities[i][0] + Math.sin(t * 0.3 + i) * 0.001;
-      posArr[i3 + 1] += nodeVelocities[i][1] + Math.cos(t * 0.2 + i * 0.5) * 0.001;
-      posArr[i3 + 2] += nodeVelocities[i][2] + Math.sin(t * 0.25 + i * 0.7) * 0.001;
+      const vel = nodeVelocities[i];
+      posArr[i3] += vel[0] + Math.sin(sin0 + i) * 0.001;
+      posArr[i3 + 1] += vel[1] + Math.cos(cos0 + i * 0.5) * 0.001;
+      posArr[i3 + 2] += vel[2] + Math.sin(sin1 + i * 0.7) * 0.001;
 
-      // Boundary bounce
       for (let d = 0; d < 3; d++) {
         if (Math.abs(posArr[i3 + d]) > 4) {
-          nodeVelocities[i][d] *= -1;
+          vel[d] *= -1;
         }
       }
     }
     pointsRef.current.geometry.attributes.position.needsUpdate = true;
 
-    // Rebuild connections
     const linePosArr = linesRef.current?.geometry.attributes.position
       .array as Float32Array;
     const lineColArr = linesRef.current?.geometry.attributes.color
       .array as Float32Array;
     if (!linePosArr || !lineColArr) return;
 
+    const distSqThreshold = CONNECTION_DISTANCE * CONNECTION_DISTANCE;
     let lineIdx = 0;
-    for (let i = 0; i < NODE_COUNT; i++) {
-      for (let j = i + 1; j < NODE_COUNT; j++) {
-        const dx = posArr[i * 3] - posArr[j * 3];
-        const dy = posArr[i * 3 + 1] - posArr[j * 3 + 1];
-        const dz = posArr[i * 3 + 2] - posArr[j * 3 + 2];
-        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (dist < CONNECTION_DISTANCE) {
-          linePosArr[lineIdx] = posArr[i * 3];
-          linePosArr[lineIdx + 1] = posArr[i * 3 + 1];
-          linePosArr[lineIdx + 2] = posArr[i * 3 + 2];
-          linePosArr[lineIdx + 3] = posArr[j * 3];
-          linePosArr[lineIdx + 4] = posArr[j * 3 + 1];
-          linePosArr[lineIdx + 5] = posArr[j * 3 + 2];
+    const sinT = Math.sin(t);
 
-          const alpha = (1 - dist / CONNECTION_DISTANCE) * (0.3 + Math.sin(t + i) * 0.15);
+    for (let i = 0; i < NODE_COUNT; i++) {
+      const i3 = i * 3;
+      const ix = posArr[i3], iy = posArr[i3 + 1], iz = posArr[i3 + 2];
+      for (let j = i + 1; j < NODE_COUNT; j++) {
+        const j3 = j * 3;
+        const dx = ix - posArr[j3];
+        const dy = iy - posArr[j3 + 1];
+        const dz = iz - posArr[j3 + 2];
+        const distSq = dx * dx + dy * dy + dz * dz;
+        if (distSq < distSqThreshold) {
+          const dist = Math.sqrt(distSq);
+          linePosArr[lineIdx] = ix;
+          linePosArr[lineIdx + 1] = iy;
+          linePosArr[lineIdx + 2] = iz;
+          linePosArr[lineIdx + 3] = posArr[j3];
+          linePosArr[lineIdx + 4] = posArr[j3 + 1];
+          linePosArr[lineIdx + 5] = posArr[j3 + 2];
+
+          const alpha = (1 - dist / CONNECTION_DISTANCE) * (0.3 + Math.sin(sinT + i) * 0.15);
           lineColArr[lineIdx] = 0.424 * alpha;
           lineColArr[lineIdx + 1] = 0.388 * alpha;
           lineColArr[lineIdx + 2] = alpha;
-          lineColArr[lineIdx + 3] = 0.0 * alpha;
+          lineColArr[lineIdx + 3] = 0.0;
           lineColArr[lineIdx + 4] = 0.831 * alpha;
           lineColArr[lineIdx + 5] = 0.667 * alpha;
           lineIdx += 6;
         }
       }
     }
-    // Zero out remaining lines
+
     for (let k = lineIdx; k < linePosArr.length; k++) {
       linePosArr[k] = 0;
       lineColArr[k] = 0;

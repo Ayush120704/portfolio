@@ -51,27 +51,31 @@ export default function MatrixRain() {
     const colArr = pointsRef.current.geometry.attributes.color
       .array as Float32Array;
 
+    const sinT2 = Math.sin(t * 2);
+    const sinT10 = Math.sin(t * 10);
+
     for (let r = 0; r < RING_COUNT; r++) {
       const radius = 1.5 + r * 0.6;
       const speed = 0.3 + r * 0.1;
       const rotation = t * speed;
+      const rOffset = r * POINTS_PER_RING;
 
       for (let i = 0; i < POINTS_PER_RING; i++) {
-        const idx = (r * POINTS_PER_RING + i) * 3;
-        const angle = (i / POINTS_PER_RING) * Math.PI * 2 + rotation;
-        const wobble = Math.sin(t * 2 + offsets[r * POINTS_PER_RING + i]) * 0.1;
+        const idx = (rOffset + i) * 3;
+        const frac = i / POINTS_PER_RING;
+        const angle = frac * Math.PI * 2 + rotation;
+        const wobble = Math.sin(sinT2 + offsets[rOffset + i]) * 0.1;
+        const rWobble = radius + wobble;
 
-        posArr[idx] = Math.cos(angle) * (radius + wobble);
+        posArr[idx] = Math.cos(angle) * rWobble;
         posArr[idx + 1] += 0.005;
-        posArr[idx + 2] = Math.sin(angle) * (radius + wobble);
+        posArr[idx + 2] = Math.sin(angle) * rWobble;
 
-        // Reset to bottom
         if (posArr[idx + 1] > 4) {
           posArr[idx + 1] = -4;
         }
 
-        // Flicker effect
-        const flicker = Math.sin(t * 10 + i * 0.5) > 0.7 ? 1.5 : 1;
+        const flicker = Math.sin(sinT10 + i * 0.5) > 0.7 ? 1.5 : 1;
         colArr[idx] = 0.424 * flicker;
         colArr[idx + 1] = 0.831 * flicker;
         colArr[idx + 2] = 0.667 * flicker;

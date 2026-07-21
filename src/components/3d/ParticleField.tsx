@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo, useCallback } from "react";
+import { useRef, useMemo, useCallback, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -17,6 +17,7 @@ export default function ParticleField() {
 
     const accentColor = new THREE.Color("#6c63ff");
     const secondaryColor = new THREE.Color("#00d4aa");
+    const tempColor = new THREE.Color();
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const i3 = i * 3;
@@ -29,10 +30,10 @@ export default function ParticleField() {
       positions[i3 + 2] = radius * Math.cos(phi);
 
       const mixRatio = Math.random();
-      const color = accentColor.clone().lerp(secondaryColor, mixRatio);
-      colors[i3] = color.r;
-      colors[i3 + 1] = color.g;
-      colors[i3 + 2] = color.b;
+      tempColor.copy(accentColor).lerp(secondaryColor, mixRatio);
+      colors[i3] = tempColor.r;
+      colors[i3 + 1] = tempColor.g;
+      colors[i3 + 2] = tempColor.b;
 
       sizes[i] = Math.random() * 3 + 0.5;
     }
@@ -45,11 +46,9 @@ export default function ParticleField() {
     mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
   }, []);
 
-  useMemo(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("pointermove", handlePointerMove);
-      return () => window.removeEventListener("pointermove", handlePointerMove);
-    }
+  useEffect(() => {
+    window.addEventListener("pointermove", handlePointerMove);
+    return () => window.removeEventListener("pointermove", handlePointerMove);
   }, [handlePointerMove]);
 
   useFrame((state) => {

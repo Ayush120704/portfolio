@@ -15,10 +15,17 @@ export default function MagneticButton({
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState("translate(0px, 0px)");
+  const rectRef = useRef<DOMRect | null>(null);
+
+  const handleMouseEnter = () => {
+    if (ref.current) {
+      rectRef.current = ref.current.getBoundingClientRect();
+    }
+  };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
+    const rect = rectRef.current;
+    if (!rect) return;
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
     setTransform(`translate(${x * strength}px, ${y * strength}px)`);
@@ -26,6 +33,7 @@ export default function MagneticButton({
 
   const handleMouseLeave = () => {
     setTransform("translate(0px, 0px)");
+    rectRef.current = null;
   };
 
   return (
@@ -36,6 +44,7 @@ export default function MagneticButton({
         transform,
         transition: "transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
       }}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >

@@ -82,7 +82,7 @@ export default function HeroScene() {
     <div className="absolute inset-0">
       <Canvas
         camera={{ position: [0, 0, 8], fov: 55 }}
-        dpr={[1, 1.5]}
+        dpr={[1, 1]}
         gl={{ antialias: true, alpha: true }}
         style={{ background: "transparent" }}
       >

@@ -108,13 +108,10 @@ export default function ContactSection() {
     }
     setStatus("sending");
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
+      const res = await fetch("https://formsubmit.co/ajax/aayumishra2024@gmail.com", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          access_key: "YOUR_WEB3FORMS_KEY",
-          ...formState,
-        }),
+        body: JSON.stringify(formState),
       });
       if (res.ok) {
         setStatus("sent");
@@ -122,11 +119,12 @@ export default function ContactSection() {
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 2500);
       } else {
-        throw new Error("Failed");
+        setStatus("error");
+        setErrorMsg("Form submission failed. Please try again.");
       }
     } catch {
       setStatus("error");
-      setErrorMsg("Something went wrong. Please try again later.");
+      setErrorMsg("Network error. Check your connection and try again.");
     }
   };
 

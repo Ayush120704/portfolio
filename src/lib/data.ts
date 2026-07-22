@@ -7,7 +7,7 @@ export const personalInfo = {
   github: "https://github.com/Ayush120704",
   linkedin: "https://www.linkedin.com/in/ayush-mishra-",
   leetcode: "https://leetcode.com/u/ayushmishra12345/",
-  resumeUrl: "#",
+  resumeUrl: "/resume/Ayush_Mishra_Resume.pdf",
   bio: `B.Tech CSE student at United Institute of Technology, Prayagraj.
 Building intelligent systems with AI, NLP, and modern web technologies.
 151-day LeetCode streak. GATE CSE 2026 Qualified.`,
@@ -109,19 +109,6 @@ export const featuredProject: Project = {
 };
 
 export const projects: Project[] = [
-  {
-    id: "khazaana",
-    title: "Khazaana",
-    subtitle: "Personal Expense Tracker",
-    description:
-      "Full-stack MERN expense tracker with real-time analytics, category budgeting, and intelligent spending insights.",
-    color: "#a78bfa",
-    tech: ["React", "Node.js", "Express", "MongoDB", "Chart.js"],
-    githubLink: "https://github.com/Ayush120704",
-    liveLink: "#",
-    role: "Full-Stack Developer",
-    duration: "2025",
-  },
   {
     id: "ai-assistant",
     title: "AI Assistant",
@@ -340,3 +327,48 @@ export const profileLinks = [
     icon: "📦",
   },
 ];
+
+export const navItems = [
+  { name: "Home", section: "home", shortcut: "H" },
+  { name: "About", section: "about", shortcut: "A" },
+  { name: "Skills", section: "skills", shortcut: "S" },
+  { name: "Projects", section: "projects", shortcut: "P" },
+  { name: "Timeline", section: "timeline", shortcut: "T" },
+  { name: "Contact", section: "contact", shortcut: "C" },
+  { name: "Resume", action: "resume", shortcut: "R" },
+  { name: "GitHub", action: "github", shortcut: "G" },
+  { name: "LeetCode", action: "leetcode", shortcut: "L" },
+];
+
+export const terminalCommands: Record<string, string> = {
+  help: "Available commands: help, projects, skills, about, resume, contact, github, leetcode, clear",
+  projects: `Projects:
+  1. NeuroWell - AI Mental Health Companion (featured)
+  2. Khazaana - Personal Expense Tracker
+  3. AI Assistant - Conversational AI Platform
+  4. Legal Lens - AI Legal Document Analysis
+  5. AI Interview Coach - Interview Prep Platform
+  6. Spotify Clone - Music Streaming UI
+  7. Real Estate Platform - Property Listings`,
+  skills: "Skills: PyTorch, React, NLP, Computer Vision, Python, Java, FastAPI, MongoDB, Docker, OpenCV, BERT, DeepFace",
+  about: "Ayush Mishra - B.Tech CSE student, AI/ML Engineer, Full-Stack Developer. Building intelligent web applications with a focus on multimodal AI.",
+  resume: "Downloading Ayush's resume PDF... It's a LaTeX-typeset, ATS-optimized single pager highlighting AI/ML, full-stack, and multimodal AI experience.",
+  contact: `Email: aayumishra2024@gmail.com\nPhone: +91 8960961976\nLinkedIn: linkedin.com/in/ayush-mishra-\nGitHub: github.com/Ayush120704`,
+  github: "GitHub: github.com/Ayush120704",
+  leetcode: "LeetCode: 250+ problems solved, 151-day streak.\nProfile: leetcode.com/u/ayushmishra12345/",
+  clear: "__CLEAR__",
+};
+
+export const aiKnowledge: Record<string, string> = {
+  neurowell: `NeuroWell is Ayush's flagship project — an AI-powered mental health companion. It uses OpenCV and DeepFace for facial emotion recognition, RAG with ChromaDB for long-term memory, and a React/FastAPI stack. It detects cognitive distortions using fine-tuned BERT models.`,
+  projects: `Ayush has built 7 major projects: NeuroWell (AI mental health), Khazaana (expense tracker), AI Assistant (conversational AI), Legal Lens (legal document analysis), AI Interview Coach, Spotify Clone, and Real Estate Platform. Most use the MERN stack with AI integrations.`,
+  skills: `Ayush's core expertise: AI/ML (PyTorch, BERT, OpenCV, DeepFace), NLP (cognitive distortion detection, RAG), Full-Stack (React, Next.js, Node.js, FastAPI), Databases (MongoDB, ChromaDB), and Tools (Docker, Git, Linux).`,
+  resume: `Ayush's resume is a LaTeX-typeset, ATS-optimized single page covering his AI/ML experience, projects (NeuroWell, Legal Lens, AI Interview Coach), education (B.Tech CSE, 8.31 CGPA), GATE CSE 2026 qualification, and AIT Bangkok selection. You can download it from the navbar (Resume button), Hero section, Contact section, or Ctrl+K → Resume.`,
+  contact: `You can reach Ayush via email at aayumishra2024@gmail.com, phone at +91 8960961976, LinkedIn, or through the contact form on this page.`,
+  experience: `Ayush is a B.Tech CSE student (2023-2027) at United Institute of Technology, Prayagraj with 8.31 CGPA. He's a Global Innovation Intern at Collab4Good Bangkok, an AI/ML researcher building NeuroWell, and GATE CSE 2026 qualified.`,
+  leetcode: `Ayush has solved 250+ problems on LeetCode with a 151-day active streak. He focuses on data structures and algorithms consistently.`,
+  gate: `Ayush qualified GATE CSE 2026 — the Graduate Aptitude Test in Engineering. This is a competitive exam for postgraduate admissions and PSU recruitment in India.`,
+  about: `Ayush Mishra is a B.Tech CSE student, AI/ML Engineer, and Full-Stack Developer. He's passionate about multimodal AI, building intelligent systems, and maintaining a 151-day LeetCode streak.`,
+  ait: `Ayush was selected for the AIT Bangkok internship (1 of ~6,000 applicants) with a 90% merit scholarship. He also works as a Global Innovation Intern at Collab4Good.`,
+  default: `I can tell you about Ayush's projects, skills, experience, LeetCode, GATE qualification, AIT Bangkok internship, or how to contact him. Try asking about NeuroWell, his tech stack, or his LeetCode streak!`,
+};

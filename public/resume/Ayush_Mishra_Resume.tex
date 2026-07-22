@@ -1,0 +1,169 @@
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+
+
+
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{bookmark}
+\input{glyphtounicode}
+
+% ---------- ATS Optimization ----------
+\pdfgentounicode=1
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\footskip}{5pt}
+
+\usepackage[margin=0.4in]{geometry}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Section formatting
+\titleformat{\section}{
+  \vspace{-8pt}\raggedright\large\bfseries
+}{}{0em}{}[\color{black}\titlerule \vspace{-6pt}]
+
+% ---------- Custom Commands ----------
+\newcommand{\resumeItem}[1]{\item\small{#1 \vspace{-2pt}}}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-3pt}\item
+    \begin{tabular*}{\linewidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{\linewidth}{l@{\extracolsep{\fill}}r}
+      \small\textbf{#1} & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}\vspace{-5pt}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.2in, label={$\bullet$}]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-4pt}}
+
+% -----------------------------------------
+%               RESUME START
+% -----------------------------------------
+\begin{document}
+
+% ---------- Heading ----------
+\begin{center}
+    {\Huge \textbf{Ayush Mishra}} \\ \vspace{2pt}
+    \small Prayagraj, India | +91-8960961976 | \href{mailto:aayumishra2024@gmail.com}{aayumishra2024@gmail.com} \\ \vspace{2pt}
+    \small 
+    \href{https://www.linkedin.com/in/ayush-mishra-14a608281/}{LinkedIn} | 
+    \href{https://github.com/Ayush120704/Ayush120704}{GitHub} | 
+    \href{https://leetcode.com/u/ayushmishra12345/}{LeetCode} | 
+    \href{https://ayush-portfolio-psi-one.vercel.app/}{Portfolio}
+\end{center}
+\vspace{-10pt}
+
+% ---------- Summary ----------
+\section{Summary}
+\vspace{-2pt}
+\small{AI/ML Engineer with expertise in deep learning, NLP, and Computer Vision. Specialized in transformer architectures (BERT, ALBERT), multimodal pipelines, and Retrieval-Augmented Generation (RAG) systems. Experienced in model fine-tuning, transfer learning, and deploying AI applications using PyTorch, Hugging Face, and the MERN stack. GATE CSE 2026 qualified.}
+\vspace{-2pt}
+
+% ---------- Education ----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {United Institute of Technology}{Expected May 2027}
+      {Bachelor of Technology (B.Tech) in Computer Science and Engineering -- CGPA: 8.31/10.0}{Prayagraj, India}
+    \resumeSubheading
+      {New R.S.J Public School}{2020 -- 2022}
+      {Class 12th (CBSE): 83.2\% | Class 10th (CBSE): 89.4\%}{Prayagraj, India}
+  \resumeSubHeadingListEnd
+
+% ---------- Skills ----------
+\section{Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{AI/ML}{: PyTorch, Hugging Face Transformers, BERT, ALBERT, Fine-Tuning, Transfer Learning, Vector Embeddings} \\
+     \textbf{NLP \& CV}{: Cognitive Distortion Detection, Facial Emotion Recognition, DeepFace, OpenCV, Sentence-Transformers} \\
+     \textbf{Generative AI}{: RAG, ChromaDB, LLM Integration, Semantic Search, Vector Databases} \\
+     \textbf{Languages}{: Python, Java, C, JavaScript, SQL} \\
+     \textbf{Web Stack}{: React.js, Node.js, Express.js, FastAPI, MongoDB, Tailwind CSS, Three.js, REST APIs} \\
+     \textbf{Core CS}{: DSA, OOP, Operating Systems, Git, GitHub, NumPy, Pandas}
+    }}
+ \end{itemize}
+ \vspace{-8pt}
+
+% ---------- Experience ----------
+\section{Experience}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Collab4Good}{Aug 2025 -- Present}
+      {Global Innovation Intern}{Remote / Bangkok, Thailand}
+      \resumeItemListStart
+        \resumeItem{Developed a full-stack MERN application for NGO resource sharing, improving cross-team workflow efficiency across 5 organizations serving 200+ end users.}
+        \resumeItem{Engineered responsive React components and RESTful APIs within an international agile team, delivering milestones 2 sprints ahead of schedule and reducing page load times by 40\%.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {United Institute of Technology}{Jul 2024}
+      {Software Engineering Summer Trainee}{Prayagraj, India}
+      \resumeItemListStart
+        \resumeItem{Built a browser-based text editor with session state persistence using localStorage, eliminating data loss across page reloads for 100+ daily active users.}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+% ---------- Projects ----------
+\section{Projects}
+  \resumeSubHeadingListStart
+    \resumeProjectHeading
+      {\textbf{NeuroWell -- Multimodal Emotional Support System} | \emph{Python, PyTorch, BERT, RAG, ChromaDB, OpenCV}}{2025}
+      \resumeItemListStart
+        \resumeItem{Architected an end-to-end multimodal AI pipeline integrating speech transcripts, facial expression analysis, and text embeddings for real-time emotional support, processing 3 input modalities simultaneously.}
+        \resumeItem{Engineered a RAG system with ChromaDB vector embeddings and cosine similarity retrieval to deliver rubric-grounded contextual responses, improving relevance by 35\% over baseline.}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Legal Lens -- AI Legal Document Analyzer} | \emph{React, FastAPI, Sentence-Transformers, ChromaDB, Three.js}}{2025}
+      \resumeItemListStart
+        \resumeItem{Engineered an asynchronous AI agent system scanning legal contracts for high-risk GDPR/HIPAA clause violations in real time using NLP-based text classification and semantic search.}
+        \resumeItem{Built a compliance engine with ChromaDB vector database seeded with regulatory standards and a custom scoring model combining cosine similarity with keyword-penalty weighting.}
+        \resumeItem{Implemented WebSocket live updates with automatic HTTP-polling fallback and an interactive 3D vector visualizer using Three.js for embedding space exploration.}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{AI Interview Coach -- Multimodal Interview Platform} | \emph{React, Node.js, FastAPI, OpenCV, BERT, MongoDB}}{2025}
+      \resumeItemListStart
+        \resumeItem{Designed a 3-tier microservice architecture (React frontend, Node.js API, Python FastAPI ML backend) delivering real-time multimodal interview evaluation.}
+        \resumeItem{Integrated OpenCV facial expression tracking at 1Hz and a fine-tuned BERT model for filler-word detection, achieving 92\% classification accuracy on validation data.}
+        \resumeItem{Developed a timestamp-synchronized signal fusion algorithm computing weighted composite confidence scores and an interactive Three.js scrubbing timeline for session review.}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+% ---------- Achievements ----------
+\section{Honors and Achievements}
+ \resumeItemListStart
+    \resumeItem{\textbf{GATE CSE 2026 Qualified} -- Cleared Graduate Aptitude Test in Engineering for Computer Science.}
+    \resumeItem{\textbf{Global Merit Scholar} -- Selected for AIT Bangkok with 90\% merit scholarship among international applicants.}
+    \resumeItem{\textbf{Competitive Programming} -- 150+ day LeetCode streak solving advanced DSA problems; active on Codeforces.}
+    \resumeItem{\textbf{Leadership} -- Event Head for Enigma College Fest (5,000+ attendees); Core Organizer for UHack Hackathon.}
+ \resumeItemListEnd
+
+\end{document}

@@ -252,6 +252,23 @@ body {
   animation-duration: 0s !important;
 }
 
+.recruiter-mode .glass-card {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 20px var(--accent-glow) !important;
+}
+
+.recruiter-mode [style*="color: var(--text-secondary)"] {
+  color: var(--text-primary) !important;
+}
+
+.recruiter-mode .recruiter-badge {
+  display: flex !important;
+}
+
+.recruiter-badge {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   :before,
@@ -293,6 +310,29 @@ body {
   position: absolute;
   top: 4px;
   right: 8px;
+}
+
+.section-divider {
+  width: 1px;
+  height: 60px;
+  margin: 0 auto;
+  background: linear-gradient(to bottom, transparent, var(--accent-dim), transparent);
+}
+
+.section-divider-horizontal {
+  height: 1px;
+  margin: 0;
+  background: linear-gradient(to right, transparent, var(--border-color), transparent);
+}
+
+kbd {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-glass);
+  color: var(--text-secondary);
 }
 
 @media (max-width: 640px) {

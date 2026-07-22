@@ -6,6 +6,46 @@ import { useInView } from "framer-motion";
 import { skills } from "@/lib/data";
 import { usePortfolioStore } from "@/lib/store";
 
+const proficiency: Record<string, number> = {
+  PyTorch: 85,
+  "Hugging Face": 80,
+  BERT: 82,
+  ALBERT: 75,
+  "Fine-Tuning": 88,
+  "Transfer Learning": 78,
+  "NLP Preprocessing": 90,
+  "Cognitive Distortion Detection": 85,
+  "Facial Emotion Recognition": 80,
+  DeepFace: 78,
+  OpenCV: 82,
+  "RAG Pipelines": 85,
+  ChromaDB: 80,
+  "LLM Integration": 82,
+  "Vector Databases": 78,
+  "Prompt Engineering": 88,
+  Python: 92,
+  Java: 70,
+  JavaScript: 85,
+  TypeScript: 75,
+  React: 85,
+  "Next.js": 80,
+  "Node.js": 82,
+  FastAPI: 78,
+  NumPy: 88,
+  Pandas: 85,
+  MongoDB: 80,
+  MySQL: 72,
+  "scikit-learn": 78,
+  TensorFlow: 75,
+  Git: 88,
+  Docker: 72,
+  Linux: 70,
+  Postman: 80,
+  "VS Code": 90,
+  Vercel: 82,
+  Netlify: 75,
+};
+
 export default function SkillsSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -32,7 +72,7 @@ export default function SkillsSection() {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {skills.map((group, i) => (
             <motion.div
               key={group.category}
@@ -41,7 +81,7 @@ export default function SkillsSection() {
               transition={{ duration: 0.5, delay: 0.1 + i * 0.08 }}
               className="glass-card rounded-2xl p-6 hover:border-accent/20 transition-all duration-300"
             >
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-5">
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0"
                   style={{
@@ -59,20 +99,30 @@ export default function SkillsSection() {
                   {group.category}
                 </h3>
               </div>
-              <div className="flex flex-wrap gap-1.5">
-                {group.items.map((item) => (
-                  <span
-                    key={item}
-                    className="px-2.5 py-1 text-xs rounded-full"
-                    style={{
-                      backgroundColor: "var(--accent-dim)",
-                      color: "var(--accent)",
-                      opacity: 0.9,
-                    }}
-                  >
-                    {item}
-                  </span>
-                ))}
+              <div className="space-y-3">
+                {group.items.map((item) => {
+                  const level = proficiency[item] || 70;
+                  return (
+                    <div key={item}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs" style={{ color: "var(--text-secondary)" }}>{item}</span>
+                        <span className="text-[10px] font-mono" style={{ color: "var(--text-tertiary)" }}>{level}%</span>
+                      </div>
+                      <div
+                        className="h-1 rounded-full overflow-hidden"
+                        style={{ backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" }}
+                      >
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={isInView ? { width: `${level}%` } : {}}
+                          transition={{ duration: 1, delay: 0.3 + i * 0.1, ease: "easeOut" }}
+                          className="h-full rounded-full"
+                          style={{ backgroundColor: level > 80 ? "var(--accent)" : level > 60 ? "var(--purple)" : "var(--text-tertiary)" }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </motion.div>
           ))}

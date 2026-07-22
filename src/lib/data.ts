@@ -1,253 +1,319 @@
 export const personalInfo = {
   name: "Ayush Mishra",
-  title: "AI/ML Engineer",
-  subtitle: "Full-Stack Developer & Creative Technologist",
+  title: "AI/ML Engineer & Full-Stack Developer",
   email: "aayumishra2024@gmail.com",
-  phone: "8960961976",
+  phone: "+91 8960961976",
+  location: "Prayagraj, India",
   github: "https://github.com/Ayush120704",
+  linkedin: "https://www.linkedin.com/in/ayush-mishra-",
   leetcode: "https://leetcode.com/u/ayushmishra12345/",
-  linkedin: "",
-  twitter: "",
-  bio: [
-    "B.Tech CSE @ United Institute of Technology, Prayagraj (2027) — 8.31 CGPA",
-    "Researching multimodal AI & NLP through NeuroWell, a mental-health companion combining facial emotion recognition + cognitive distortion detection",
-    "Global Innovation Intern @ Collab4Good, Bangkok — building NGO tech on the MERN stack",
-    "GATE CSE 2026 Qualified · Selected for AIT Bangkok internship (1 of ~6,000 applicants), 90% merit scholarship",
-    "151-day LeetCode streak — consistency over intensity",
-  ],
+  resumeUrl: "#",
+  bio: `B.Tech CSE student at United Institute of Technology, Prayagraj.
+Building intelligent systems with AI, NLP, and modern web technologies.
+151-day LeetCode streak. GATE CSE 2026 Qualified.`,
 };
+
+export const aboutParagraphs = [
+  "I'm a B.Tech CSE student at United Institute of Technology, Prayagraj (2027) with a CGPA of 8.31. I'm passionate about AI/ML, full-stack development, and building intelligent systems that solve real-world problems.",
+  "My research focuses on multimodal AI — combining computer vision and NLP to build applications like NeuroWell, a mental health companion that detects facial emotions and cognitive distortions in real-time.",
+  "When I'm not coding, you'll find me grinding LeetCode (151-day streak and counting), exploring new tech, or working on open-source projects. I believe in consistency over intensity.",
+];
 
 export interface Project {
   id: string;
   title: string;
+  subtitle?: string;
   description: string;
-  longDescription: string;
-  technologies: string[];
-  githubUrl: string;
-  liveUrl?: string;
-  category: "ai/ml" | "fullstack" | "web";
-  featured: boolean;
+  role?: string;
+  duration?: string;
   color: string;
+  image?: string;
+  tech: string[];
+  liveLink?: string;
+  githubLink?: string;
+  featured?: boolean;
+  featuredDescription?: string;
+  comingSoon?: boolean;
+  privateRepo?: boolean;
+  problem?: string;
+  solution?: string;
+  architecture?: { step: string; desc: string }[];
+  challenges?: string[];
+  lessons?: string[];
+  timeline?: { phase: string; duration: string }[];
+  futureImprovements?: string[];
+  achievements?: string[];
 }
+
+export const featuredProject: Project = {
+  id: "neurowell",
+  title: "NeuroWell",
+  subtitle: "AI-Powered Mental Health Companion",
+  description:
+    "Multimodal AI platform combining facial emotion recognition (DeepFace + OpenCV) with NLP-based cognitive distortion detection and RAG-powered long-term memory.",
+  role: "AI/ML Engineer & Full-Stack Developer",
+  duration: "2024 — Present",
+  color: "#4fd1ff",
+  tech: [
+    "Python",
+    "PyTorch",
+    "BERT",
+    "OpenCV",
+    "DeepFace",
+    "ChromaDB",
+    "MongoDB",
+    "React",
+    "FastAPI",
+  ],
+  liveLink: "#",
+  githubLink: "https://github.com/Ayush120704/Neurowell-Project",
+  featured: true,
+  featuredDescription:
+    "NeuroWell combines multi-modal AI (text + facial emotion) with long-term memory via RAG and vector databases. It processes emotions in real-time using OpenCV and DeepFace, creating a personalized emotional profile for each user.",
+  problem:
+    "Mental health support is often inaccessible, expensive, or impersonal. Existing chatbots lack emotional awareness and cannot adapt to users' changing mental states over time.",
+  solution:
+    "Built a multimodal AI companion that analyzes facial expressions and text simultaneously, detects cognitive distortions using fine-tuned BERT, and maintains long-term context through RAG with ChromaDB for truly personalized support.",
+  architecture: [
+    { step: "01", desc: "Face capture via webcam → OpenCV preprocessing" },
+    { step: "02", desc: "DeepFace emotion classification (7 emotions)" },
+    { step: "03", desc: "NLP pipeline detects cognitive distortions" },
+    { step: "04", desc: "RAG retrieves user history from ChromaDB" },
+    { step: "05", desc: "LLM generates context-aware CBT response" },
+    { step: "06", desc: "Longitudinal profile updated in MongoDB" },
+  ],
+  challenges: [
+    "Real-time emotion inference latency optimization",
+    "Balancing contradiction detection accuracy with response speed",
+    "Handling edge cases in low-light facial capture",
+    "Designing a privacy-first architecture for sensitive data",
+  ],
+  lessons: [
+    "Learned to optimize OpenCV pipelines for real-time performance",
+    "Deep understanding of RAG and vector database design",
+    "Importance of ethical AI in mental health applications",
+    "Building for scale with MongoDB aggregation pipelines",
+  ],
+  timeline: [
+    { phase: "Research & Planning", duration: "4 weeks" },
+    { phase: "MVP Development", duration: "8 weeks" },
+    { phase: "Model Fine-tuning", duration: "6 weeks" },
+    { phase: "Integration & Testing", duration: "4 weeks" },
+  ],
+  futureImprovements: [
+    "Mobile app with React Native",
+    "Multi-language support",
+    "Crisis detection & escalation system",
+    "Therapist dashboard integration",
+  ],
+};
 
 export const projects: Project[] = [
   {
-    id: "simon-says",
-    title: "Simon Says Game",
+    id: "khazaana",
+    title: "Khazaana",
+    subtitle: "Personal Expense Tracker",
     description:
-      "Classic Simon memory game built with JavaScript — test and improve your recall skills.",
-    longDescription:
-      "Interactive Simon Says memory game featuring pattern generation, progressively harder sequences, sound effects, and score tracking. Built with vanilla JavaScript, HTML5, and CSS3.",
-    technologies: ["JavaScript", "HTML5", "CSS3"],
-    githubUrl: "https://github.com/Ayush120704/Simon_Says_Game",
-    category: "web",
-    featured: true,
-    color: "#ff6b6b",
-  },
-  {
-    id: "spotify-clone",
-    title: "Spotify Clone",
-    description:
-      "Spotify-inspired music streaming UI clone built with HTML, CSS, and JavaScript.",
-    longDescription:
-      "Front-end clone of the Spotify web player interface featuring a responsive layout, custom playlist UI, music player controls, and album art display. Built with HTML5, CSS3, and JavaScript.",
-    technologies: ["JavaScript", "HTML5", "CSS3", "Responsive Design"],
-    githubUrl: "https://github.com/Ayush120704/Spotify_clone",
-    category: "web",
-    featured: true,
-    color: "#1DB954",
-  },
-  {
-    id: "neurowell",
-    title: "NeuroWell",
-    description:
-      "AI-powered mental health companion combining facial emotion recognition with NLP-based cognitive distortion detection.",
-    longDescription:
-      "Multimodal digital wellness platform featuring real-time facial emotion recognition (DeepFace + FACS Action Units via OpenCV), NLP-based cognitive distortion detection (BERT/ALBERT) for contradiction-aware CBT interventions, RAG pipeline with ChromaDB for grounded responses, and persistent longitudinal user profiling via MongoDB.",
-    technologies: [
-      "Python",
-      "PyTorch",
-      "BERT",
-      "DeepFace",
-      "OpenCV",
-      "ChromaDB",
-      "MongoDB",
-      "React",
-      "FastAPI",
-    ],
-    githubUrl: "https://github.com/Ayush120704/Neurowell-Project",
-    category: "ai/ml",
-    featured: true,
-    color: "#6c63ff",
+      "Full-stack MERN expense tracker with real-time analytics, category budgeting, and intelligent spending insights.",
+    color: "#a78bfa",
+    tech: ["React", "Node.js", "Express", "MongoDB", "Chart.js"],
+    githubLink: "https://github.com/Ayush120704",
+    liveLink: "#",
+    role: "Full-Stack Developer",
+    duration: "2025",
   },
   {
     id: "ai-assistant",
     title: "AI Assistant",
+    subtitle: "Conversational AI Platform",
     description:
-      "Full-stack MERN conversational assistant with persistent session history and real-time NLP inference.",
-    longDescription:
-      "Full-stack MERN conversational assistant with persistent session history, real-time NLP inference pipeline, React.js frontend, and a RESTful Express.js API layer.",
-    technologies: [
-      "React",
-      "Node.js",
-      "Express",
-      "MongoDB",
-      "NLP",
-      "JavaScript",
-    ],
-    githubUrl: "https://github.com/Ayush120704/AI-Assistant",
-    category: "ai/ml",
-    featured: true,
-    color: "#4ecdc4",
+      "Full-stack MERN conversational assistant with persistent session history, real-time NLP inference, and RESTful API layer.",
+    color: "#34d399",
+    tech: ["React", "Node.js", "Express", "MongoDB", "NLP"],
+    githubLink: "https://github.com/Ayush120704/AI-Assistant",
+    role: "Full-Stack Developer",
+    duration: "2025",
   },
   {
     id: "legal-lens",
     title: "Legal Lens",
+    subtitle: "AI Legal Document Analysis",
     description:
-      "Intelligent legal document analysis tool powered by AI.",
-    longDescription:
-      "Legal document analysis platform that leverages AI to parse, analyze, and extract key insights from legal texts, making legal information more accessible.",
-    technologies: ["JavaScript", "AI/ML", "NLP"],
-    githubUrl: "https://github.com/Ayush120704/Legal-Lens",
-    category: "ai/ml",
-    featured: true,
+      "Intelligent legal document analysis platform that leverages AI to parse, analyze, and extract key insights from legal texts.",
     color: "#f97316",
+    tech: ["JavaScript", "AI/ML", "NLP", "React"],
+    githubLink: "https://github.com/Ayush120704/Legal-Lens",
+    role: "Developer",
+    duration: "2025",
   },
   {
     id: "ai-interview-coach",
     title: "AI Interview Coach",
+    subtitle: "Interview Preparation Platform",
     description:
-      "AI-powered interview preparation platform with real-time feedback.",
-    longDescription:
-      "Intelligent interview coaching platform that uses AI to simulate interview scenarios, provide real-time feedback, and help users improve their interview skills.",
-    technologies: ["JavaScript", "AI/ML", "NLP", "React"],
-    githubUrl: "https://github.com/Ayush120704/AI_Interview_Coach",
-    category: "ai/ml",
-    featured: true,
+      "AI-powered interview preparation platform that simulates interviews and provides real-time feedback.",
     color: "#e879f9",
+    tech: ["JavaScript", "AI/ML", "NLP", "React"],
+    githubLink: "https://github.com/Ayush120704/AI_Interview_Coach",
+    role: "Developer",
+    duration: "2025",
+  },
+  {
+    id: "spotify-clone",
+    title: "Spotify Clone",
+    subtitle: "Music Streaming UI",
+    description:
+      "Spotify-inspired music streaming UI clone with responsive layout, custom playlist UI, and music player controls.",
+    color: "#1db954",
+    tech: ["JavaScript", "HTML5", "CSS3"],
+    githubLink: "https://github.com/Ayush120704/Spotify_clone",
+    role: "Frontend Developer",
+    duration: "2024",
   },
   {
     id: "real-estate",
-    title: "Real Estate Project",
+    title: "Real Estate Platform",
+    subtitle: "Property Listings Website",
     description:
-      "Responsive real-world real estate web application.",
-    longDescription:
-      "Full-stack responsive real estate application featuring property listings, search functionality, and modern UI/UX design patterns.",
-    technologies: ["JavaScript", "HTML5", "CSS3", "React"],
-    githubUrl: "https://github.com/Ayush120704/Real_State_Project",
-    category: "fullstack",
-    featured: false,
+      "Full-stack responsive real estate application with property listings, search, and modern UI/UX.",
     color: "#22c55e",
-  },
-  {
-    id: "django-python",
-    title: "Django with Python",
-    description:
-      "Full-stack web application built with Django and Python.",
-    longDescription:
-      "Comprehensive Django-based web application showcasing backend development skills with Python, including database design, REST APIs, and template rendering.",
-    technologies: ["Python", "Django", "HTML5", "CSS3"],
-    githubUrl: "https://github.com/Ayush120704/Djangowithpython",
-    category: "fullstack",
-    featured: false,
-    color: "#3b82f6",
-  },
-  {
-    id: "meta-hackathon",
-    title: "Meta Hackathon",
-    description:
-      "Hackathon project built for the Meta hackathon event.",
-    longDescription:
-      "Innovative project developed during the Meta hackathon, demonstrating rapid prototyping and creative problem-solving skills.",
-    technologies: ["JavaScript", "React"],
-    githubUrl: "https://github.com/Ayush120704/Meta_Hackathon",
-    category: "web",
-    featured: false,
-    color: "#f59e0b",
+    tech: ["JavaScript", "HTML5", "CSS3", "React"],
+    githubLink: "https://github.com/Ayush120704/Real_State_Project",
+    role: "Full-Stack Developer",
+    duration: "2024",
   },
 ];
 
-export const skills = {
-  "AI/ML & Deep Learning": [
-    "PyTorch",
-    "Hugging Face Transformers",
-    "BERT",
-    "ALBERT",
-    "Model Fine-Tuning",
-    "Transfer Learning",
-    "Vector Embeddings",
-  ],
-  "NLP & Computer Vision": [
-    "NLP Preprocessing",
-    "Cognitive Distortion Detection",
-    "Facial Emotion Recognition",
-    "DeepFace",
-    "OpenCV",
-  ],
-  "Generative AI": [
-    "RAG Pipelines",
-    "ChromaDB",
-    "LLM Integration",
-    "Vector Databases",
-  ],
-  "Languages & Frameworks": [
-    "Python",
-    "Java",
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "Next.js",
-    "Node.js",
-    "Django",
-    "FastAPI",
-  ],
-  "Data & Databases": [
-    "NumPy",
-    "Pandas",
-    "MongoDB",
-    "MySQL",
-    "SQLite",
-    "scikit-learn",
-    "TensorFlow",
-    "Keras",
-  ],
-  "Tools & Platforms": [
-    "Git",
-    "GitHub",
-    "Vercel",
-    "Netlify",
-    "Postman",
-    "VS Code",
-    "Linux",
-    "Docker",
-  ],
-};
+export const timeline = [
+  {
+    year: "2023",
+    title: "Started B.Tech CSE",
+    detail:
+      "Joined United Institute of Technology, Prayagraj. Began journey in computer science with a focus on AI/ML.",
+  },
+  {
+    year: "2024",
+    title: "AI/ML Research Begins",
+    detail:
+      "Started developing NeuroWell — a multimodal AI mental health companion. Began LeetCode journey.",
+  },
+  {
+    year: "2025",
+    title: "Global Innovation Intern",
+    detail:
+      "Selected as Global Innovation Intern at Collab4Good, Bangkok. Building NGO tech solutions on MERN stack.",
+  },
+  {
+    year: "2026",
+    title: "GATE Qualified & AIT Bangkok",
+    detail:
+      "Qualified GATE CSE 2026. Selected for AIT Bangkok internship (1 of ~6,000 applicants) with 90% merit scholarship.",
+  },
+];
+
+export const achievements = [
+  { number: "151+", text: "Day LeetCode streak — consistency over intensity" },
+  { number: "8.31", text: "CGPA — maintaining academic excellence while building" },
+  { number: "GATE '26", text: "Qualified Graduate Aptitude Test in Engineering CSE" },
+  { number: "6,000:1", text: "Selected for AIT Bangkok internship from thousands" },
+  { number: "250+", text: "Problems solved on LeetCode across DSA topics" },
+  { number: "90%", text: "Merit scholarship for AIT Bangkok program" },
+];
+
+export const skills = [
+  {
+    category: "AI/ML & Deep Learning",
+    icon: "🧠",
+    items: [
+      "PyTorch",
+      "Hugging Face",
+      "BERT",
+      "ALBERT",
+      "Fine-Tuning",
+      "Transfer Learning",
+    ],
+  },
+  {
+    category: "NLP & Computer Vision",
+    icon: "👁️",
+    items: [
+      "NLP Preprocessing",
+      "Cognitive Distortion Detection",
+      "Facial Emotion Recognition",
+      "DeepFace",
+      "OpenCV",
+    ],
+  },
+  {
+    category: "Generative AI & RAG",
+    icon: "⚡",
+    items: [
+      "RAG Pipelines",
+      "ChromaDB",
+      "LLM Integration",
+      "Vector Databases",
+      "Prompt Engineering",
+    ],
+  },
+  {
+    category: "Languages & Frameworks",
+    icon: "💻",
+    items: [
+      "Python",
+      "Java",
+      "JavaScript",
+      "TypeScript",
+      "React",
+      "Next.js",
+      "Node.js",
+      "FastAPI",
+    ],
+  },
+  {
+    category: "Data & Databases",
+    icon: "📊",
+    items: [
+      "NumPy",
+      "Pandas",
+      "MongoDB",
+      "MySQL",
+      "scikit-learn",
+      "TensorFlow",
+    ],
+  },
+  {
+    category: "Tools & Platforms",
+    icon: "🛠️",
+    items: [
+      "Git",
+      "Docker",
+      "Linux",
+      "Postman",
+      "VS Code",
+      "Vercel",
+      "Netlify",
+    ],
+  },
+];
 
 export const experience = [
   {
     title: "Global Innovation Intern",
     company: "Collab4Good",
-    location: "Bangkok, Thailand (In-Campus)",
+    location: "Bangkok, Thailand",
     period: "2025 — Present",
     description:
       "Building NGO tech solutions on the MERN stack. Developing full-stack web applications for social impact organizations.",
-    technologies: ["React", "Node.js", "MongoDB", "Express"],
+    tech: ["React", "Node.js", "MongoDB", "Express"],
   },
   {
     title: "AI/ML Researcher",
-    company: "Personal Research",
+    company: "Independent Research",
     location: "India",
     period: "2024 — Present",
     description:
-      "Developing NeuroWell — a multimodal mental health companion using facial emotion recognition, NLP-based cognitive distortion detection, and RAG pipelines.",
-    technologies: [
-      "Python",
-      "PyTorch",
-      "BERT",
-      "OpenCV",
-      "ChromaDB",
-      "MongoDB",
-    ],
+      "Developing NeuroWell — a multimodal mental health companion using facial emotion recognition, NLP-based cognitive distortion detection, and RAG pipelines with ChromaDB.",
+    tech: ["Python", "PyTorch", "BERT", "OpenCV", "ChromaDB", "MongoDB"],
   },
   {
     title: "B.Tech CSE Student",
@@ -256,70 +322,21 @@ export const experience = [
     period: "2023 — 2027",
     description:
       "CGPA: 8.31. GATE CSE 2026 Qualified. Active in coding competitions with a 151-day LeetCode streak.",
-    technologies: ["DSA", "Java", "Python", "Web Development"],
+    tech: ["DSA", "Java", "Python", "Web Development"],
   },
 ];
 
-export const stats = [
-  { label: "CGPA", value: 8.31, suffix: "" },
-  { label: "LeetCode Streak", value: 151, suffix: " days" },
-  { label: "Projects", value: projects.length, suffix: "+" },
-  { label: "GitHub Repos", value: 9, suffix: "+" },
-];
-
-export interface TechCategory {
-  category: string;
-  items: string[];
-  color: string;
-}
-
-export const techCategories: TechCategory[] = [
+export const profileLinks = [
   {
-    category: "AI/ML & Deep Learning",
-    items: ["PyTorch", "Hugging Face Transformers", "BERT", "ALBERT", "Model Fine-Tuning", "Transfer Learning", "Vector Embeddings"],
-    color: "#6c63ff",
+    name: "LeetCode",
+    label: "LeetCode Profile",
+    url: "https://leetcode.com/u/ayushmishra12345/",
+    icon: "⚡",
   },
   {
-    category: "NLP & Computer Vision",
-    items: ["NLP Preprocessing", "Cognitive Distortion Detection", "Facial Emotion Recognition", "DeepFace", "OpenCV"],
-    color: "#4ecdc4",
+    name: "GitHub",
+    label: "GitHub Profile",
+    url: "https://github.com/Ayush120704",
+    icon: "📦",
   },
-  {
-    category: "Generative AI",
-    items: ["RAG Pipelines", "ChromaDB", "LLM Integration", "Vector Databases"],
-    color: "#e879f9",
-  },
-  {
-    category: "Languages & Frameworks",
-    items: ["Python", "Java", "JavaScript", "TypeScript", "React", "Next.js", "Node.js", "Django", "FastAPI"],
-    color: "#f97316",
-  },
-  {
-    category: "Data & Databases",
-    items: ["NumPy", "Pandas", "MongoDB", "MySQL", "SQLite", "scikit-learn", "TensorFlow", "Keras"],
-    color: "#22c55e",
-  },
-  {
-    category: "Tools & Platforms",
-    items: ["Git", "GitHub", "Vercel", "Netlify", "Postman", "VS Code", "Linux", "Docker"],
-    color: "#3b82f6",
-  },
-];
-
-export const marqueeItems = [
-  "PyTorch",
-  "TensorFlow",
-  "React",
-  "Next.js",
-  "Python",
-  "NLP",
-  "Computer Vision",
-  "FastAPI",
-  "Node.js",
-  "MongoDB",
-  "BERT",
-  "Docker",
-  "TypeScript",
-  "Java",
-  "Machine Learning",
 ];

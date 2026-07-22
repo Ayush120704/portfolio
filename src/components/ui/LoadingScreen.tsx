@@ -4,31 +4,52 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePortfolioStore } from "@/lib/store";
 
+const loadingTexts = [
+  "Initializing neural networks...",
+  "Loading AI models...",
+  "Warming up GPUs...",
+  "Connecting to vector database...",
+  "Calibrating sensors...",
+  "Almost ready...",
+];
+
 export default function LoadingScreen() {
-  const { setLoaded, setLoadProgress } = usePortfolioStore();
-  const [show, setShow] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [textIndex, setTextIndex] = useState(0);
+  const [show, setShow] = useState(true);
+  const { setLoaded } = usePortfolioStore();
 
   useEffect(() => {
-    let p = 0;
     const interval = setInterval(() => {
-      p += Math.random() * 15 + 5;
-      if (p >= 100) {
-        p = 100;
-        setLoadProgress(100);
-        setProgress(100);
-        clearInterval(interval);
-        setTimeout(() => {
-          setLoaded(true);
-          setTimeout(() => setShow(false), 600);
-        }, 400);
-      } else {
-        setLoadProgress(Math.min(p, 100));
-        setProgress(Math.min(p, 100));
-      }
-    }, 150);
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 1 + Math.floor(Math.random() * 3);
+      });
+    }, 40);
+
     return () => clearInterval(interval);
-  }, [setLoaded, setLoadProgress]);
+  }, []);
+
+  useEffect(() => {
+    if (progress >= 100) {
+      const timer = setTimeout(() => {
+        setShow(false);
+        setLoaded(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [progress, setLoaded]);
+
+  useEffect(() => {
+    const idx = Math.min(
+      Math.floor((progress / 100) * loadingTexts.length),
+      loadingTexts.length - 1
+    );
+    setTextIndex(idx);
+  }, [progress]);
 
   return (
     <AnimatePresence>
@@ -36,62 +57,45 @@ export default function LoadingScreen() {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center"
+          transition={{ duration: 0.6 }}
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
+          style={{ backgroundColor: "var(--bg-primary)" }}
         >
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/10 rounded-full blur-[100px]" />
-            <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent-secondary/10 rounded-full blur-[100px]" />
-          </div>
+          <div className="text-center space-y-8">
+            <div className="space-y-2">
+              <motion.p
+                key={textIndex}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="font-mono text-xs"
+                style={{ color: "var(--accent)" }}
+              >
+                {loadingTexts[textIndex]}
+              </motion.p>
+            </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="flex flex-col items-center gap-8 relative z-10"
-          >
-            <motion.div
-              className="text-5xl sm:text-6xl font-bold gradient-text"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            <div
+              className="w-48 h-[2px] rounded-full overflow-hidden"
+              style={{ backgroundColor: "var(--border-color)" }}
             >
-              AM
-            </motion.div>
-
-            <div className="w-48 sm:w-64 h-[2px] bg-surface rounded-full overflow-hidden">
               <motion.div
                 className="h-full rounded-full"
-                style={{
-                  background:
-                    "linear-gradient(90deg, var(--accent), var(--accent-secondary))",
-                }}
+                style={{ backgroundColor: "var(--accent)" }}
                 initial={{ width: "0%" }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                animate={{ width: `${Math.min(progress, 100)}%` }}
+                transition={{ duration: 0.1 }}
               />
             </div>
 
-            <div className="flex items-center gap-3 text-sm text-muted font-mono">
-              <span>{Math.round(progress)}%</span>
-              {progress < 100 && (
-                <motion.span
-                  animate={{ opacity: [0, 1, 0] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                >
-                  loading
-                </motion.span>
-              )}
-              {progress >= 100 && (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-accent-secondary"
-                >
-                  ready
-                </motion.span>
-              )}
-            </div>
-          </motion.div>
+            <p className="font-mono text-xs" style={{ color: "var(--text-tertiary)" }}>
+              <motion.span
+                animate={{ opacity: [1, 0] }}
+                transition={{ repeat: Infinity, duration: 1 }}
+              >
+                {Math.min(progress, 100)}%
+              </motion.span>
+            </p>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

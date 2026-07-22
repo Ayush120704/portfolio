@@ -1,93 +1,227 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
-import { experience } from "@/lib/data";
+import { useRef } from "react";
+import { motion } from "framer-motion";
+import { useInView } from "framer-motion";
+import { timeline, experience, achievements } from "@/lib/data";
 import { usePortfolioStore } from "@/lib/store";
-import { Briefcase } from "lucide-react";
 
-export default function ExperienceSection() {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { margin: "-200px" });
-  const { setActiveSection } = usePortfolioStore();
-
-  useEffect(() => {
-    if (isInView) setActiveSection("experience");
-  }, [isInView, setActiveSection]);
+function TimelineSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const { theme } = usePortfolioStore();
+  const isDark = theme === "dark";
 
   return (
-    <section
-      id="experience"
-      ref={ref}
-      className="relative py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto"
-    >
-      <div className="backdrop-blur-sm bg-background/30 rounded-3xl p-4 sm:p-8 lg:p-12">
-        <div className="flex items-center gap-3 mb-8 sm:mb-12">
-          <div className="h-px flex-1 max-w-[40px] sm:max-w-[60px] bg-accent" />
-          <span className="text-xs sm:text-sm text-accent font-mono uppercase tracking-widest">
-            Experience
-          </span>
-        </div>
-
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-10 sm:mb-16">
-          My <span className="gradient-text">journey</span>
-        </h2>
+    <section id="timeline" ref={ref} className="py-28 md:py-40 px-6 relative">
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-18"
+        >
+          <p
+            className="text-xs uppercase tracking-[0.3em] mb-3 font-medium"
+            style={{ color: "var(--accent)" }}
+          >
+            Journey
+          </p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+            My path in <span style={{ color: "var(--accent)" }}>tech</span>
+          </h2>
+        </motion.div>
 
         <div className="relative">
-          <div className="absolute left-4 sm:left-6 top-0 bottom-0 w-px bg-gradient-to-b from-accent via-accent-secondary to-transparent hidden md:block" />
-
-          <div className="space-y-6 sm:space-y-8 lg:space-y-12">
-            {experience.map((exp, i) => (
+          <div className="timeline-line" />
+          {timeline.map((item, i) => {
+            const isLeft = i % 2 === 0;
+            return (
               <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ delay: i * 0.2, duration: 0.6, ease: "easeOut" }}
-                className="relative pl-2 sm:pl-4 md:pl-14 lg:pl-16 gsap-reveal"
+                key={`${item.year}-${i}`}
+                initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
+                animate={isInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.1 + i * 0.08 }}
+                className={`relative flex items-center mb-10 md:mb-12 ${
+                  isLeft ? "md:flex-row" : "md:flex-row-reverse"
+                }`}
               >
-                <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.2 + 0.1, duration: 0.4, ease: "backOut" }}
-                  className="absolute left-1 sm:left-3 md:left-4 top-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-accent items-center justify-center hidden md:flex shadow-[0_0_20px_rgba(108,99,255,0.4)]"
+                <div
+                  className={`flex-1 ${
+                    isLeft ? "md:text-right md:pr-14" : "md:text-left md:pl-14"
+                  } pl-14 md:pl-0`}
                 >
-                  <Briefcase size={10} className="text-white" />
-                </motion.div>
-
-                <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 relative overflow-hidden group hover:border-accent/20 transition-all duration-500">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-br from-accent/5 to-transparent" />
-                  <div className="relative z-10">
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                      <span className="text-[10px] sm:text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded">
-                        {exp.period}
-                      </span>
-                    </div>
-                    <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-1">{exp.title}</h3>
-                    <p className="text-xs sm:text-sm text-accent-secondary mb-2 sm:mb-3">
-                      {exp.company} · {exp.location}
+                  <div className="glass-card rounded-xl p-6 inline-block max-w-sm hover:border-accent/20 transition-all duration-300">
+                    <span
+                      className="font-mono text-xs block mb-1.5"
+                      style={{ color: "var(--accent)" }}
+                    >
+                      {item.year}
+                    </span>
+                    <h3
+                      className="text-sm font-semibold"
+                      style={{ color: "var(--text-primary)" }}
+                    >
+                      {item.title}
+                    </h3>
+                    <p
+                      className="text-xs mt-1.5 leading-relaxed"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      {item.detail}
                     </p>
-                    <p className="text-xs sm:text-sm text-muted leading-relaxed mb-3 sm:mb-4">
-                      {exp.description}
-                    </p>
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                      {exp.technologies.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md bg-surface text-[10px] sm:text-xs text-muted"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
                   </div>
                 </div>
+                <div
+                  className="absolute left-[20px] md:left-1/2 md:-translate-x-1/2 w-3 h-3 rounded-full z-10"
+                  style={{
+                    backgroundColor: "var(--accent)",
+                    border: "2px solid var(--bg-primary)",
+                    boxShadow: isDark
+                      ? "0 0 12px var(--accent-glow)"
+                      : "0 0 8px rgba(3,105,161,0.2)",
+                  }}
+                />
+                <div className="hidden md:block flex-1" />
               </motion.div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>
+  );
+}
+
+function MilestonesSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { theme } = usePortfolioStore();
+  const isDark = theme === "dark";
+
+  return (
+    <section id="achievements" ref={ref} className="py-28 md:py-40 px-6 relative">
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+        >
+          <p
+            className="text-xs uppercase tracking-[0.3em] mb-3 font-medium"
+            style={{ color: "var(--accent)" }}
+          >
+            Achievements
+          </p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-16">
+            Milestones & Recognition<span style={{ color: "var(--accent)" }}>.</span>
+          </h2>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid sm:grid-cols-2 gap-3">
+            {achievements.map((item, i) => (
+              <motion.div
+                key={`${item.number}-${i}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                className="glass-card rounded-xl p-5 group hover:border-accent/20 transition-all duration-300 hover:-translate-y-0.5"
+              >
+                <span
+                  className="font-mono text-lg font-bold block mb-2"
+                  style={{ color: "var(--accent)" }}
+                >
+                  {item.number}
+                </span>
+                <p
+                  className="text-xs leading-relaxed group-hover:text-text-primary transition-colors duration-300"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  {item.text}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="space-y-6"
+          >
+            <div className="glass-card rounded-2xl p-6">
+              <h3 className="text-xs font-medium uppercase tracking-wider mb-5" style={{ color: "var(--text-secondary)" }}>
+                Experience
+              </h3>
+              {experience.map((exp, i) => (
+                <div
+                  key={i}
+                  className={`${i < experience.length - 1 ? "mb-5 pb-5" : ""}`}
+                  style={{
+                    borderBottom:
+                      i < experience.length - 1
+                        ? "1px solid var(--border-color)"
+                        : "none",
+                  }}
+                >
+                  <div className="flex items-start justify-between mb-1">
+                    <h4
+                      className="text-sm font-semibold"
+                      style={{ color: "var(--text-primary)" }}
+                    >
+                      {exp.title}
+                    </h4>
+                    <span
+                      className="text-[10px] shrink-0 ml-4"
+                      style={{ color: "var(--text-tertiary)" }}
+                    >
+                      {exp.period}
+                    </span>
+                  </div>
+                  <p
+                    className="text-xs mb-2"
+                    style={{ color: "var(--accent)" }}
+                  >
+                    {exp.company} — {exp.location}
+                  </p>
+                  <p
+                    className="text-xs leading-relaxed"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    {exp.description}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {exp.tech.map((t) => (
+                      <span
+                        key={t}
+                        className="px-2 py-0.5 text-[10px] rounded-full"
+                        style={{
+                          backgroundColor: isDark
+                            ? "rgba(255,255,255,0.03)"
+                            : "rgba(0,0,0,0.03)",
+                          color: "var(--text-tertiary)",
+                          border: "1px solid var(--border-color)",
+                        }}
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function ExperienceSection() {
+  return (
+    <>
+      <TimelineSection />
+      <MilestonesSection />
+    </>
   );
 }

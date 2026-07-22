@@ -1,277 +1,351 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import { motion, useInView } from "framer-motion";
-import { personalInfo } from "@/lib/data";
+import { useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { useInView } from "framer-motion";
+import { personalInfo, profileLinks } from "@/lib/data";
 import { usePortfolioStore } from "@/lib/store";
-import { Mail, Phone, Code, ExternalLink, Send, CheckCircle, Loader2 } from "lucide-react";
 
-type SubmitState = "idle" | "sending" | "success" | "error";
+function ConfettiPiece({
+  delay,
+  x,
+  color,
+}: {
+  delay: number;
+  x: number;
+  color: string;
+}) {
+  return (
+    <div
+      className="confetti-piece"
+      style={{
+        left: `${x}%`,
+        backgroundColor: color,
+        animationDuration: `${1.5 + Math.random()}s`,
+        animationDelay: `${delay}s`,
+        borderRadius: Math.random() > 0.5 ? "50%" : "2px",
+        width: `${6 + Math.random() * 6}px`,
+        height: `${6 + Math.random() * 6}px`,
+      }}
+    />
+  );
+}
+
+function Confetti() {
+  const colors = ["#4FD1FF", "#A78BFA", "#34D399", "#FBBF24", "#F87171"];
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[9990]">
+      {Array.from({ length: 30 }).map((_, i) => (
+        <ConfettiPiece
+          key={i}
+          delay={Math.random() * 0.5}
+          x={Math.random() * 100}
+          color={colors[i % colors.length]}
+        />
+      ))}
+    </div>
+  );
+}
+
+function CopyButton({ text, label }: { text: string; label: string }) {
+  const [copied, setCopied] = useState(false);
+
+  return (
+    <button
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(text);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        } catch {}
+      }}
+      className="text-xs transition-colors duration-300"
+      style={{ color: "var(--text-tertiary)" }}
+      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
+      onMouseLeave={(e) =>
+        (e.currentTarget.style.color = "var(--text-tertiary)")
+      }
+    >
+      {copied ? "Copied!" : `Copy ${label}`}
+    </button>
+  );
+}
 
 export default function ContactSection() {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { margin: "-200px" });
-  const { setActiveSection, setCursorVariant } = usePortfolioStore();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const formRef = useRef<HTMLFormElement>(null);
+  const [formState, setFormState] = useState({
+    from_name: "",
+    from_email: "",
     message: "",
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [status, setStatus] = useState<
+    "idle" | "sending" | "sent" | "error"
+  >("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [showConfetti, setShowConfetti] = useState(false);
+  const { theme } = usePortfolioStore();
+  const isDark = theme === "dark";
 
-  const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const inputStyle = isDark
+    ? { background: "rgba(255,255,255,0.03)", borderColor: "rgba(255,255,255,0.05)" }
+    : { background: "#F8FAFC", borderColor: "#E2E8F0" };
 
-  useEffect(() => {
-    if (isInView) setActiveSection("contact");
-  }, [isInView, setActiveSection]);
-
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-      newErrors.email = "Invalid email format";
-    if (!formData.subject.trim()) newErrors.subject = "Subject is required";
-    if (!formData.message.trim()) newErrors.message = "Message is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
-
-    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
-    if (!accessKey) {
-      window.location.href = `mailto:${personalInfo.email}?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`From: ${formData.name} (${formData.email})\n\n${formData.message}`)}`;
+    if (!formState.from_name.trim() || !formState.from_email.trim() || !formState.message.trim()) {
+      setStatus("error");
+      setErrorMsg("Please fill in all fields.");
       return;
     }
-
-    setSubmitState("sending");
-
+    setStatus("sending");
     try {
       const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          access_key: accessKey,
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
+          access_key: "YOUR_WEB3FORMS_KEY",
+          ...formState,
         }),
       });
-
-      const data = await res.json();
-
-      if (data.success) {
-        setSubmitState("success");
-        setFormData({ name: "", email: "", subject: "", message: "" });
-        setTimeout(() => setSubmitState("idle"), 5000);
+      if (res.ok) {
+        setStatus("sent");
+        setFormState({ from_name: "", from_email: "", message: "" });
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 2500);
       } else {
-        setSubmitState("error");
-        setTimeout(() => setSubmitState("idle"), 5000);
+        throw new Error("Failed");
       }
     } catch {
-      setSubmitState("error");
-      setTimeout(() => setSubmitState("idle"), 5000);
+      setStatus("error");
+      setErrorMsg("Something went wrong. Please try again later.");
     }
   };
 
-  const contactLinks = [
+  const contacts = [
     {
-      icon: <Mail size={16} />,
+      icon: "✉️",
       label: "Email",
       value: personalInfo.email,
       href: `mailto:${personalInfo.email}`,
-      color: "bg-accent/10 text-accent group-hover:bg-accent",
-      external: false,
-    },
-    ...(personalInfo.linkedin
-      ? [
-          {
-            icon: <Code size={16} />,
-            label: "LinkedIn",
-            value: "Connect on LinkedIn",
-            href: personalInfo.linkedin,
-            color: "bg-[#0077B5]/10 text-[#0077B5] group-hover:bg-[#0077B5]",
-            external: true,
-          },
-        ]
-      : []),
-    {
-      icon: <Code size={16} />,
-      label: "GitHub",
-      value: "Ayush120704",
-      href: personalInfo.github,
-      color: "bg-accent/10 text-accent group-hover:bg-accent",
-      external: true,
+      copyText: personalInfo.email,
     },
     {
-      icon: <ExternalLink size={16} />,
-      label: "LeetCode",
-      value: "ayushmishra12345",
-      href: personalInfo.leetcode,
-      color: "bg-accent-secondary/10 text-accent-secondary group-hover:bg-accent-secondary",
-      external: true,
-    },
-    {
-      icon: <Phone size={16} />,
+      icon: "📱",
       label: "Phone",
       value: personalInfo.phone,
       href: `tel:${personalInfo.phone}`,
-      color: "bg-accent/10 text-accent group-hover:bg-accent",
-      external: false,
     },
+    ...profileLinks.map((link) => ({
+      icon: link.icon,
+      label: link.name,
+      value: link.label,
+      href: link.url,
+    })),
   ];
 
   return (
-    <section
-      id="contact"
-      ref={ref}
-      className="relative py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto"
-    >
-      <div className="backdrop-blur-sm bg-background/30 rounded-3xl p-4 sm:p-8 lg:p-12">
-        <div className="flex items-center gap-3 mb-8 sm:mb-12">
-          <div className="h-px flex-1 max-w-[40px] sm:max-w-[60px] bg-accent" />
-          <span className="text-xs sm:text-sm text-accent font-mono uppercase tracking-widest">
+    <section id="contact" ref={ref} className="py-28 md:py-40 px-6 relative">
+      {showConfetti && <Confetti />}
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <p
+            className="text-xs uppercase tracking-[0.3em] mb-3 font-medium"
+            style={{ color: "var(--accent)" }}
+          >
             Contact
-          </span>
-        </div>
+          </p>
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+            Let&apos;s build something
+            <br />
+            great{" "}
+            <span style={{ color: "var(--accent)" }}>together</span>.
+          </h2>
+        </motion.div>
 
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
-          Let&apos;s <span className="gradient-text">connect</span>
-        </h2>
-        <p className="text-muted mb-8 sm:mb-12 max-w-lg text-xs sm:text-sm md:text-base">
-          Have a project in mind or want to collaborate? I&apos;d love to hear
-          from you.
-        </p>
-
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <input
-                type="text"
-                placeholder="Your name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl glass bg-transparent border-none text-foreground placeholder:text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all text-xs sm:text-sm"
-              />
-              {errors.name && (
-                <p className="text-red-400 text-[10px] sm:text-xs mt-1">{errors.name}</p>
-              )}
-            </div>
-            <div>
-              <input
-                type="email"
-                placeholder="Your email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl glass bg-transparent border-none text-foreground placeholder:text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all text-xs sm:text-sm"
-              />
-              {errors.email && (
-                <p className="text-red-400 text-[10px] sm:text-xs mt-1">{errors.email}</p>
-              )}
-            </div>
-            <div>
-              <input
-                type="text"
-                placeholder="Subject"
-                value={formData.subject}
-                onChange={(e) =>
-                  setFormData({ ...formData, subject: e.target.value })
-                }
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl glass bg-transparent border-none text-foreground placeholder:text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all text-xs sm:text-sm"
-              />
-              {errors.subject && (
-                <p className="text-red-400 text-[10px] sm:text-xs mt-1">{errors.subject}</p>
-              )}
-            </div>
-            <div>
-              <textarea
-                placeholder="Your message"
-                rows={4}
-                value={formData.message}
-                onChange={(e) =>
-                  setFormData({ ...formData, message: e.target.value })
-                }
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl glass bg-transparent border-none text-foreground placeholder:text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all resize-none text-xs sm:text-sm"
-              />
-              {errors.message && (
-                <p className="text-red-400 text-[10px] sm:text-xs mt-1">{errors.message}</p>
-              )}
-            </div>
-
-            <motion.button
-              type="submit"
-              disabled={submitState === "sending"}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`w-full px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-300 ${
-                submitState === "success"
-                  ? "bg-green-500 text-white"
-                  : submitState === "error"
-                    ? "bg-red-500 text-white"
-                    : submitState === "sending"
-                      ? "bg-accent/50 text-white cursor-wait"
-                      : "bg-accent text-white hover:bg-accent/80 hover:shadow-[0_0_30px_rgba(108,99,255,0.3)]"
-              }`}
-              onMouseEnter={() => setCursorVariant("button")}
-              onMouseLeave={() => setCursorVariant("default")}
+        <div className="grid md:grid-cols-2 gap-12 md:gap-16">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              className="glass-card rounded-2xl p-8 space-y-6"
             >
-              {submitState === "success" ? (
-                <>
-                  <CheckCircle size={14} /> Message Sent!
-                </>
-              ) : submitState === "error" ? (
-                "Failed — Try Email Instead"
-              ) : submitState === "sending" ? (
-                <>
-                  <Loader2 size={14} className="animate-spin" /> Sending...
-                </>
-              ) : (
-                <>
-                  Send Message <Send size={12} />
-                </>
-              )}
-            </motion.button>
-          </form>
+              <div className="space-y-1">
+                <label
+                  htmlFor="from_name"
+                  className="block text-xs font-medium"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="from_name"
+                  name="from_name"
+                  value={formState.from_name}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 rounded-xl border text-sm placeholder:text-text-tertiary focus:outline-none transition-colors duration-300"
+                  style={inputStyle}
+                  placeholder="Your name"
+                />
+              </div>
 
-          <div className="space-y-3">
-            {contactLinks.map((link) => (
-              <motion.a
-                key={link.label}
-                href={link.href}
-                target={link.external ? "_blank" : undefined}
-                rel={link.external ? "noopener noreferrer" : undefined}
-                className="flex items-center gap-3 sm:gap-4 glass rounded-lg sm:rounded-xl p-3 sm:p-4 hover:bg-surface-hover transition-all duration-300 group"
-                whileHover={{ x: 4 }}
-                onMouseEnter={() => setCursorVariant("link")}
-                onMouseLeave={() => setCursorVariant("default")}
+              <div className="space-y-1">
+                <label
+                  htmlFor="from_email"
+                  className="block text-xs font-medium"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="from_email"
+                  name="from_email"
+                  value={formState.from_email}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 rounded-xl border text-sm placeholder:text-text-tertiary focus:outline-none transition-colors duration-300"
+                  style={inputStyle}
+                  placeholder="your@email.com"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label
+                  htmlFor="message"
+                  className="block text-xs font-medium"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formState.message}
+                  onChange={handleChange}
+                  rows={5}
+                  required
+                  className="w-full px-4 py-3 rounded-xl border text-sm placeholder:text-text-tertiary focus:outline-none transition-colors duration-300 resize-none"
+                  style={inputStyle}
+                  placeholder="Tell me about your project..."
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={status === "sending"}
+                className="w-full px-8 py-3.5 text-white font-semibold rounded-full text-sm disabled:opacity-50 transition-all duration-300"
+                style={{
+                  backgroundColor: "var(--accent)",
+                  boxShadow: isDark
+                    ? "0 4px 20px rgba(79,209,255,0.2)"
+                    : "0 4px 20px rgba(3,105,161,0.15)",
+                }}
+              >
+                {status === "sending" ? "Sending..." : "Send Message"}
+              </button>
+
+              {status === "sent" && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-xs text-center"
+                  style={{ color: "var(--accent)" }}
+                >
+                  Message sent successfully!
+                </motion.p>
+              )}
+              {status === "error" && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-red-400 text-xs text-center"
+                >
+                  {errorMsg}
+                </motion.p>
+              )}
+            </form>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="space-y-3"
+          >
+            <h3
+              className="text-sm font-semibold mb-4"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Get in touch
+            </h3>
+            {contacts.map((c) => (
+              <a
+                key={c.label}
+                href={c.href}
+                className="flex items-center gap-4 p-4 glass-card rounded-xl hover:border-accent/15 transition-all duration-300 group"
               >
                 <div
-                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md sm:rounded-lg flex items-center justify-center transition-all shrink-0 ${link.color}`}
+                  className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                  style={{
+                    backgroundColor: "var(--accent-dim)",
+                  }}
                 >
-                  {link.icon}
+                  <span className="text-base">{c.icon}</span>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-[10px] sm:text-xs text-muted">{link.label}</div>
-                  <div className="text-xs sm:text-sm font-medium truncate">{link.value}</div>
+                <div className="flex-1 min-w-0">
+                  <p
+                    className="text-xs"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    {c.label}
+                  </p>
+                  <p
+                    className="text-sm truncate transition-colors duration-300 group-hover:text-accent"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    {c.value}
+                  </p>
                 </div>
-                {link.external && (
-                  <ExternalLink
-                    size={12}
-                    className="text-muted group-hover:text-foreground transition-colors shrink-0"
-                  />
+                {"copyText" in c && c.copyText && (
+                  <CopyButton text={c.copyText as string} label={c.label} />
                 )}
-              </motion.a>
+                <svg
+                  className="w-4 h-4 shrink-0 transition-all duration-300 group-hover:translate-x-0.5"
+                  style={{ color: "var(--text-secondary)" }}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </a>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

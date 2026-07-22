@@ -1,174 +1,139 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePortfolioStore } from "@/lib/store";
-import { Sun, Moon, Menu, X } from "lucide-react";
+import { personalInfo } from "@/lib/data";
 
-const navLinks = [
-  { href: "#hero", label: "Home" },
-  { href: "#about", label: "About" },
-  { href: "#projects", label: "Projects" },
-  { href: "#skills", label: "Skills" },
-  { href: "#experience", label: "Experience" },
-  { href: "#contact", label: "Contact" },
+const navItems = [
+  { name: "Home", section: "home" },
+  { name: "About", section: "about" },
+  { name: "Skills", section: "skills" },
+  { name: "Projects", section: "projects" },
+  { name: "Timeline", section: "timeline" },
+  { name: "Contact", section: "contact" },
 ];
 
 export default function Navbar() {
-  const { theme, toggleTheme, activeSection, setCursorVariant } =
-    usePortfolioStore();
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const lastScrollY = useRef(0);
-  const ticking = useRef(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const { theme, toggleTheme } = usePortfolioStore();
+  const isDark = theme === "dark";
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!ticking.current) {
-        window.requestAnimationFrame(() => {
-          const currentY = window.scrollY;
-          const scrollThreshold = 120;
-
-          if (currentY < scrollThreshold) {
-            setIsVisible(false);
-          } else {
-            const direction = currentY > lastScrollY.current ? "down" : "up";
-            setIsVisible(direction === "up");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
           }
-
-          lastScrollY.current = currentY;
-          ticking.current = false;
         });
-        ticking.current = true;
-      }
-    };
+      },
+      { rootMargin: "-50% 0px -50% 0px" }
+    );
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    navItems.forEach((item) => {
+      const el = document.getElementById(item.section);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (isMobileOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isMobileOpen]);
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+    setMobileOpen(false);
+  };
 
   return (
     <>
-      <AnimatePresence>
-        {(isVisible || isMobileOpen) && (
-          <motion.nav
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed top-0 left-0 right-0 z-50 glass py-3"
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <button
+            onClick={() => scrollTo("home")}
+            className="text-sm font-semibold tracking-tight text-text-primary hover:text-accent transition-colors"
           >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
-              <motion.a
-                href="#hero"
-                className="text-xl font-bold gradient-text"
-                onMouseEnter={() => setCursorVariant("link")}
-                onMouseLeave={() => setCursorVariant("default")}
-                whileHover={{ scale: 1.05 }}
+            {personalInfo.name.split(" ")[0]}
+            <span className="text-accent">.</span>
+          </button>
+
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => scrollTo(item.section)}
+                className={`px-3 py-1.5 text-xs rounded-full transition-all duration-300 ${
+                  activeSection === item.section
+                    ? "text-accent bg-accent/10"
+                    : "text-text-secondary hover:text-text-primary"
+                }`}
               >
-                AM
-              </motion.a>
+                {item.name}
+              </button>
+            ))}
+          </div>
 
-              <div className="hidden md:flex items-center gap-8">
-                {navLinks.map((link) => (
-                  <motion.a
-                    key={link.href}
-                    href={link.href}
-                    className={`text-sm transition-colors duration-300 relative ${
-                      activeSection === link.href.slice(1)
-                        ? "text-foreground"
-                        : "text-muted hover:text-foreground"
-                    }`}
-                    onMouseEnter={() => setCursorVariant("link")}
-                    onMouseLeave={() => setCursorVariant("default")}
-                    whileHover={{ y: -2 }}
-                  >
-                    {link.label}
-                    {activeSection === link.href.slice(1) && (
-                      <motion.div
-                        layoutId="activeNav"
-                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent"
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                      />
-                    )}
-                  </motion.a>
-                ))}
-                <motion.button
-                  onClick={toggleTheme}
-                  className="p-2 rounded-lg glass"
-                  onMouseEnter={() => setCursorVariant("button")}
-                  onMouseLeave={() => setCursorVariant("default")}
-                  whileHover={{ scale: 1.1, rotate: 15 }}
-                  whileTap={{ scale: 0.9 }}
-                  aria-label="Toggle theme"
-                >
-                  {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-                </motion.button>
-              </div>
-
-              <div className="flex md:hidden items-center gap-3">
-                <motion.button
-                  onClick={toggleTheme}
-                  className="p-2 rounded-lg glass"
-                  whileTap={{ scale: 0.9 }}
-                  aria-label="Toggle theme"
-                >
-                  {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-                </motion.button>
-                <motion.button
-                  onClick={() => setIsMobileOpen(!isMobileOpen)}
-                  className="p-2"
-                  whileTap={{ scale: 0.9 }}
-                  aria-label="Toggle menu"
-                >
-                  {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
-                </motion.button>
-              </div>
-            </div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="w-8 h-8 rounded-full glass-card flex items-center justify-center text-xs transition-all duration-300 hover:border-accent/30"
+              aria-label="Toggle theme"
+            >
+              {isDark ? "☀️" : "🌙"}
+            </button>
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="md:hidden w-8 h-8 rounded-full glass-card flex items-center justify-center text-xs"
+              aria-label="Menu"
+            >
+              ☰
+            </button>
+          </div>
+        </div>
+      </nav>
 
       <AnimatePresence>
-        {isMobileOpen && (
+        {mobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl flex items-center justify-center md:hidden"
+            className="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm md:hidden"
+            onClick={() => setMobileOpen(false)}
           >
-            <div className="flex flex-col items-center gap-6">
-              {navLinks.map((link, i) => (
-                <motion.a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsMobileOpen(false)}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ delay: i * 0.06, duration: 0.4 }}
-                  className={`text-2xl font-semibold transition-colors ${
-                    activeSection === link.href.slice(1)
-                      ? "text-foreground gradient-text"
-                      : "text-muted hover:text-foreground"
-                  }`}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="absolute right-0 top-0 bottom-0 w-64 glass-card p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-end mb-8">
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  className="text-text-secondary hover:text-text-primary"
                 >
-                  {link.label}
-                </motion.a>
-              ))}
-            </div>
+                  ✕
+                </button>
+              </div>
+              <div className="flex flex-col gap-2">
+                {navItems.map((item) => (
+                  <button
+                    key={item.name}
+                    onClick={() => scrollTo(item.section)}
+                    className={`text-left px-4 py-2.5 rounded-lg text-sm transition-all ${
+                      activeSection === item.section
+                        ? "text-accent bg-accent/10"
+                        : "text-text-secondary hover:text-text-primary hover:bg-white/5"
+                    }`}
+                  >
+                    {item.name}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

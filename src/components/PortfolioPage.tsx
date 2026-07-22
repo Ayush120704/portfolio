@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import dynamic from "next/dynamic";
+import { AnimatePresence } from "framer-motion";
 import HeroSection from "@/components/sections/HeroSection";
 import AboutSection from "@/components/sections/AboutSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
@@ -13,84 +11,60 @@ import ContactSection from "@/components/sections/ContactSection";
 import Footer from "@/components/sections/Footer";
 import Navbar from "@/components/ui/Navbar";
 import LoadingScreen from "@/components/ui/LoadingScreen";
-import MouseTracker from "@/components/ui/MouseTracker";
-import SpotlightEffect from "@/components/ui/SpotlightEffect";
-
-const GlobalScene = dynamic(() => import("@/components/3d/GlobalScene"), {
-  ssr: false,
-});
-
-gsap.registerPlugin(ScrollTrigger);
+import CustomCursor from "@/components/ui/CustomCursor";
+import ScrollProgress from "@/components/ui/ScrollProgress";
+import { usePortfolioStore } from "@/lib/store";
 
 export default function PortfolioPage() {
+  const { isLoaded } = usePortfolioStore();
+
   useEffect(() => {
-    const sections = gsap.utils.toArray<HTMLElement>("section");
+    console.log(
+      "%c👋 Hello Developer!",
+      "color: #4FD1FF; font-size: 20px; font-weight: bold;"
+    );
+    console.log(
+      "%cThanks for checking out my portfolio.\nLet's connect!",
+      "color: #A0A0A0; font-size: 12px;"
+    );
+  }, []);
 
-    sections.forEach((section) => {
-      const heading = section.querySelector("h2");
-      const cards = section.querySelectorAll(".gsap-reveal");
-
-      if (heading) {
-        gsap.fromTo(
-          heading,
-          { opacity: 0, y: 60 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: heading,
-              start: "top 85%",
-              end: "bottom 20%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-
-      if (cards.length > 0) {
-        gsap.fromTo(
-          cards,
-          { opacity: 0, y: 40, scale: 0.97 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.7,
-            stagger: 0.12,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: cards[0],
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-    });
-
+  useEffect(() => {
+    const onFocus = () => {
+      document.title = "Ayush Mishra | AI/ML Engineer & Full-Stack Developer";
+    };
+    const onBlur = () => {
+      document.title = "Come back! 👋";
+    };
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("blur", onBlur);
     return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("blur", onBlur);
     };
   }, []);
 
   return (
-    <>
-      <GlobalScene />
+    <AnimatePresence mode="wait">
       <LoadingScreen />
-      <MouseTracker />
-      <SpotlightEffect />
-      <Navbar />
-      <main className="relative z-10">
-        <HeroSection />
-        <AboutSection />
-        <ProjectsSection />
-        <SkillsSection />
-        <ExperienceSection />
-        <ContactSection />
-      </main>
-      <Footer />
-    </>
+      <div className="grain-overlay">
+        {isLoaded && (
+          <>
+            <CustomCursor />
+            <ScrollProgress />
+            <Navbar />
+            <main>
+              <HeroSection />
+              <AboutSection />
+              <SkillsSection />
+              <ProjectsSection />
+              <ExperienceSection />
+              <ContactSection />
+            </main>
+            <Footer />
+          </>
+        )}
+      </div>
+    </AnimatePresence>
   );
 }

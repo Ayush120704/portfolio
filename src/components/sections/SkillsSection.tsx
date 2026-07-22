@@ -1,117 +1,81 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
-import { techCategories, type TechCategory } from "@/lib/data";
+import { useRef } from "react";
+import { motion } from "framer-motion";
+import { useInView } from "framer-motion";
+import { skills } from "@/lib/data";
 import { usePortfolioStore } from "@/lib/store";
-import { Sparkles, ArrowUpRight } from "lucide-react";
-import PyramidCarousel from "@/components/ui/PyramidCarousel";
 
-/* -- Compact card for each tech category ------------ */
-function TechCard({ item }: { item: TechCategory }) {
-  const { setCursorVariant } = usePortfolioStore();
-  const c = item.color;
-
-  return (
-    <motion.div
-      className="group relative block w-full h-full p-3 sm:p-5 flex flex-col justify-between"
-      onMouseEnter={() => setCursorVariant("link")}
-      onMouseLeave={() => setCursorVariant("default")}
-    >
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <span
-            className="text-[8px] font-mono uppercase tracking-[0.15em] font-semibold px-2 py-0.5 rounded-full border"
-            style={{
-              color: c,
-              backgroundColor: `${c}14`,
-              borderColor: `${c}30`,
-            }}
-          >
-            Category
-          </span>
-          <Sparkles size={11} style={{ color: c }} />
-        </div>
-
-        <h3
-          className="text-xs sm:text-sm font-bold leading-snug mb-2 transition-colors"
-          style={{ color: "var(--foreground)" }}
-        >
-          {item.category}
-        </h3>
-
-        <div className="flex flex-wrap gap-1">
-          {item.items.slice(0, 6).map((skill) => (
-            <span
-              key={skill}
-              className="px-1.5 py-0.5 rounded text-[7px] sm:text-[8px] font-medium border"
-              style={{
-                color: c,
-                backgroundColor: `${c}0d`,
-                borderColor: `${c}22`,
-              }}
-            >
-              {skill}
-            </span>
-          ))}
-          {item.items.length > 6 && (
-            <span className="px-1.5 py-0.5 rounded text-[7px] sm:text-[8px] border"
-              style={{
-                color: "var(--muted)",
-                borderColor: "var(--border-color)",
-              }}
-            >
-              +{item.items.length - 6}
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div
-        className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-medium mt-2 transition-all duration-300 group-hover:gap-2"
-        style={{ color: c }}
-      >
-        <span>{item.items.length} technologies</span>
-        <ArrowUpRight size={10} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-      </div>
-    </motion.div>
-  );
-}
-
-/* -- Section ---------------------------------------- */
 export default function SkillsSection() {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { margin: "-200px" });
-  const { setActiveSection } = usePortfolioStore();
-
-  useEffect(() => {
-    if (isInView) setActiveSection("skills");
-  }, [isInView, setActiveSection]);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { theme } = usePortfolioStore();
+  const isDark = theme === "dark";
 
   return (
-    <section
-      id="skills"
-      ref={ref}
-      className="relative py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
-    >
-      <div className="backdrop-blur-sm bg-background/30 rounded-3xl p-4 sm:p-8 lg:p-12">
-        <div className="flex items-center gap-3 mb-8 sm:mb-12">
-          <div className="h-px flex-1 max-w-[40px] sm:max-w-[60px] bg-accent" />
-          <span className="text-xs sm:text-sm text-accent font-mono uppercase tracking-widest">
-            Skills
-          </span>
-        </div>
+    <section id="skills" ref={ref} className="py-28 md:py-40 px-6 relative">
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <p
+            className="text-xs uppercase tracking-[0.3em] mb-3 font-medium"
+            style={{ color: "var(--accent)" }}
+          >
+            Skills & Expertise
+          </p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
+            Tech <span style={{ color: "var(--accent)" }}>Stack</span>
+          </h2>
+        </motion.div>
 
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-10 sm:mb-16">
-          Tech <span className="gradient-text">stack</span>
-        </h2>
-
-        <div className="gsap-reveal">
-          <PyramidCarousel
-            items={techCategories}
-            renderItem={(item: TechCategory) => <TechCard item={item} />}
-            direction="vertical"
-          />
+        <div className="grid md:grid-cols-3 gap-6">
+          {skills.map((group, i) => (
+            <motion.div
+              key={group.category}
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.1 + i * 0.08 }}
+              className="glass-card rounded-2xl p-6 hover:border-accent/20 transition-all duration-300"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0"
+                  style={{
+                    background: isDark
+                      ? "rgba(79,209,255,0.08)"
+                      : "rgba(3,105,161,0.06)",
+                    border: isDark
+                      ? "1px solid rgba(79,209,255,0.2)"
+                      : "1px solid rgba(3,105,161,0.12)",
+                  }}
+                >
+                  {group.icon}
+                </div>
+                <h3 className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                  {group.category}
+                </h3>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {group.items.map((item) => (
+                  <span
+                    key={item}
+                    className="px-2.5 py-1 text-xs rounded-full"
+                    style={{
+                      backgroundColor: "var(--accent-dim)",
+                      color: "var(--accent)",
+                      opacity: 0.9,
+                    }}
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

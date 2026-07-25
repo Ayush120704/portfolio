@@ -5,7 +5,7 @@ export const personalInfo = {
   phone: "+91 8960961976",
   location: "Prayagraj, India",
   github: "https://github.com/Ayush120704",
-  linkedin: "https://www.linkedin.com/in/ayush-mishra-",
+  linkedin: "https://www.linkedin.com/in/ayush-mishra-14a608281/",
   leetcode: "https://leetcode.com/u/ayushmishra12345/",
   resumeUrl: "/resume/Ayush_Mishra_Resume.pdf",
   bio: `B.Tech CSE student at United Institute of Technology, Prayagraj.
